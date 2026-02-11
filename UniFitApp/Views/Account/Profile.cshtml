@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using UniFitApp.Models
 @inject UserManager<AppUser> UserManager
 @{
     var user = await UserManager.GetUserAsync(User);
@@ -10,12 +11,23 @@
 
         <div class="auth-card text-center">
             <div class="mb-3">
-                <div style="width: 80px; height: 80px; background-color: #333; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary-orange);">
-                    <i class="fas fa-user fa-2x text-white"></i>
-                </div>
+                @if (!string.IsNullOrEmpty(user?.ProfilePictureUrl))
+                {
+                    <img src="@user.ProfilePictureUrl"
+                         alt="Avatar"
+                         class="rounded-circle"
+                         style="width: 100px; height: 100px; object-fit: cover; border: 2px solid var(--primary-orange); margin: 0 auto; display: block;">
+                }
+                else
+                {
+                    <div style="width: 100px; height: 100px; background-color: #333; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary-orange);">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
+                }
             </div>
 
-            <h3 class="text-white">@user?.FirstName @user?.LastName</h3>
+            <h3 class="text-white mt-3">@user?.FirstName @user?.LastName</h3>
+
             <div class="mb-3">
                 @if (User.IsInRole("Coach"))
                 {
@@ -26,6 +38,7 @@
                     <span class="badge bg-primary px-3 py-2">СТУДЕНТ</span>
                 }
             </div>
+
             <p class="text-muted">@user?.Email</p>
 
             <hr class="bg-secondary" />
@@ -34,6 +47,7 @@
                 <a asp-controller="Account" asp-action="Settings" class="list-group-item list-group-item-action bg-dark text-white border-secondary d-flex align-items-center p-3">
                     <i class="fas fa-cog me-3 text-muted"></i> Настройки
                 </a>
+
                 <button class="btn btn-dark text-start border-0 py-3">
                     <i class="fas fa-bell me-2 text-muted"></i> Уведомления
                 </button>

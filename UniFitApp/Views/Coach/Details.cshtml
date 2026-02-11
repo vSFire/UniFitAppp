@@ -39,9 +39,19 @@
         {
             <div class="d-flex align-items-center p-3 rounded mb-2" style="background-color: #1E1E1E; border-left: 5px solid @(item.IsPresent ? "#198754" : "#333");">
                 <div class="me-3">
-                    <div style="width: 50px; height: 50px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--primary-orange);">
-                        <span class="text-white fw-bold">@item.Student.FirstName.Substring(0, 1)</span>
-                    </div>
+                    @if (!string.IsNullOrEmpty(item.Student.ProfilePictureUrl))
+                    {
+                        <img src="@item.Student.ProfilePictureUrl"
+                             alt="Student"
+                             class="rounded-circle"
+                             style="width: 50px; height: 50px; object-fit: cover; border: 1px solid var(--primary-orange);">
+                    }
+                    else
+                    {
+                        <div style="width: 50px; height: 50px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--primary-orange);">
+                            <span class="text-white fw-bold">@item.Student.FirstName.Substring(0, 1)</span>
+                        </div>
+                    }
                 </div>
 
                 <div class="flex-grow-1">

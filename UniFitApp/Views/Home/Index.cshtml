@@ -76,8 +76,20 @@ else
 
                         <h5 class="card-title text-white fw-bold mb-1">@item.Title</h5>
 
-                        <div class="small text-muted mb-2">
-                            <i class="fas fa-user-circle me-1"></i> Coach @(item.Coach?.FirstName ?? "Unknown")
+                        <div class="small text-muted mb-2 d-flex align-items-center">
+                            @if (!string.IsNullOrEmpty(item.Coach?.ProfilePictureUrl))
+                            {
+                                <img src="@item.Coach.ProfilePictureUrl"
+                                     alt="Coach"
+                                     class="rounded-circle me-2"
+                                     style="width: 24px; height: 24px; object-fit: cover; border: 1px solid var(--primary-orange);">
+                            }
+                            else
+                            {
+                                <i class="fas fa-user-circle me-2"></i>
+                            }
+
+                            <span>Coach @(item.Coach?.FirstName ?? "Unknown")</span>
                         </div>
 
                         <div class="small text-muted">

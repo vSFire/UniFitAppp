@@ -99,9 +99,11 @@ namespace UniFitApp.Controllers
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            return View();
+            // Загружаем пользователя из базы, чтобы получить ссылку на фото и свежие данные
+            var user = await _userManager.GetUserAsync(User);
+            return View(user);
         }
         [HttpGet]
         public IActionResult AccessDenied()
