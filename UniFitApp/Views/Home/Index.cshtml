@@ -1,0 +1,118 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@model IEnumerable<UniFitApp.Models.Workout>
+
+@{
+    ViewData["Title"] = "Расписание";
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-white mb-0">Fitness Schedule</h4>
+        <small class="text-muted">University Gym Center</small>
+    </div>
+    <div class="rounded-circle bg-dark p-2">
+        <i class="fas fa-bell text-white"></i>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between mb-4 text-center overflow-auto pb-2">
+    @for (int i = 0; i < 5; i++)
+    {
+        var day = DateTime.Now.AddDays(i);
+        bool isToday = i == 0;
+        string bgClass = isToday ? "bg-warning text-black" : "bg-dark text-muted";
+
+        <div class="rounded p-2 mx-1" style="min-width: 60px; @(isToday ? "background-color: var(--primary-orange) !important;" : "background-color: #1E1E1E;")">
+            <small class="d-block fw-bold text-uppercase" style="font-size: 10px;">@day.ToString("ddd")</small>
+            <span class="h5 fw-bold">@day.Day</span>
+        </div>
+    }
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="text-white fw-bold">Today's Classes</h5>
+    <div>
+        <span class="badge bg-warning text-dark me-1">ALL</span>
+        <span class="badge bg-dark border border-secondary text-muted">BOOKED</span>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="text-center text-muted mt-5">
+        <i class="fas fa-dumbbell fa-3x mb-3" style="opacity: 0.3;"></i>
+        <p>На сегодня тренировок нет.</p>
+    </div>
+}
+else
+{
+    @foreach (var item in Model)
+    {
+        // Считаем места
+        int spotsLeft = item.Capacity - item.Enrollments.Count;
+        bool isFull = spotsLeft <= 0;
+
+        // Проверяем, записан ли уже этот студент
+        bool isBooked = currentUser != null && item.Enrollments.Any(e => e.StudentId == currentUser.Id);
+
+        <div class="card mb-3 border-0" style="background-color: #1E1E1E; border-radius: 15px; border-left: 5px solid var(--primary-orange) !important;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="small text-muted mb-1">
+                            @item.StartTime.ToString("hh:mm tt")
+                        </div>
+
+                        <h5 class="card-title text-white fw-bold mb-1">@item.Title</h5>
+
+                        <div class="small text-muted mb-2">
+                            <i class="fas fa-user-circle me-1"></i> Coach @(item.Coach?.FirstName ?? "Unknown")
+                        </div>
+
+                        <div class="small text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i> @item.Location
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column align-items-end">
+                        @if (isFull)
+                        {
+                            <span class="badge bg-secondary mb-3">FULL</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-dark border border-warning text-warning mb-3">@spotsLeft SPOTS LEFT</span>
+                        }
+
+                        @if (isBooked)
+                        {
+                            <button class="btn btn-success btn-sm px-4 fw-bold" disabled>Booked <i class="fas fa-check"></i></button>
+                        }
+                        else if (isFull)
+                        {
+                            <button class="btn btn-secondary btn-sm px-4 fw-bold" disabled>Waitlist</button>
+                        }
+                        else
+                        {
+                            <form asp-action="Book" asp-route-id="@item.Id" method="post">
+                                <button type="submit" class="btn btn-primary btn-sm px-4 fw-bold text-white">Book</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+<div style="height: 80px;"></div>

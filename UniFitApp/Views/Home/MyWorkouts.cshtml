@@ -1,0 +1,86 @@
+﻿@model IEnumerable<UniFitApp.Models.Enrollment>
+
+@{
+    ViewData["Title"] = "Мои тренировки";
+    var upcoming = Model.Where(e => e.Workout.StartTime > DateTime.UtcNow).ToList();
+    var history = Model.Where(e => e.Workout.StartTime <= DateTime.UtcNow).ToList();
+}
+
+<div class="d-flex align-items-center mb-4">
+    <h4 class="fw-bold text-white mb-0">My Workouts</h4>
+</div>
+
+<ul class="nav nav-pills mb-4 nav-justified" style="background: #1E1E1E; border-radius: 12px; padding: 5px;">
+    <li class="nav-item">
+        <a class="nav-link active rounded-3 fw-bold" data-bs-toggle="pill" href="#upcoming" style="color: white;">Upcoming</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link rounded-3 fw-bold text-muted" data-bs-toggle="pill" href="#history">History</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+
+    <div class="tab-pane fade show active" id="upcoming">
+        @if (!upcoming.Any())
+        {
+            <div class="text-center text-muted mt-5">
+                <p>Вы пока никуда не записаны.</p>
+                <a asp-action="Index" class="btn btn-outline-warning btn-sm">Перейти к расписанию</a>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in upcoming)
+            {
+                <div class="card mb-3 border-0" style="background-color: #1E1E1E; border-radius: 15px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="text-white fw-bold mb-1">@item.Workout.Title</h5>
+                                <div class="text-warning small mb-2">
+                                    <i class="far fa-clock me-1"></i> @item.Workout.StartTime.ToString("f")
+                                </div>
+                                <div class="text-muted small">
+                                    <i class="fas fa-map-marker-alt me-1"></i> @item.Workout.Location
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <form asp-action="CancelBooking" asp-route-workoutId="@item.Workout.Id" method="post" onsubmit="return confirm('Отменить запись?');">
+                                    <button type="submit" class="btn btn-dark text-danger btn-sm" style="border-radius: 10px;">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="tab-pane fade" id="history">
+        @if (!history.Any())
+        {
+            <div class="text-center text-muted mt-5">
+                <p>История пуста.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in history)
+            {
+                <div class="card mb-3 border-0" style="background-color: #1E1E1E; opacity: 0.6;">
+                    <div class="card-body">
+                        <h6 class="text-white mb-1">@item.Workout.Title</h6>
+                        <small class="text-muted">@item.Workout.StartTime.ToString("d MMMM yyyy")</small>
+                        <span class="badge bg-secondary float-end">Completed</span>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div style="height: 80px;"></div>

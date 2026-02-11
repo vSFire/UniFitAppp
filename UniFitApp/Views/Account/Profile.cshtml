@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+    ViewData["Title"] = "Профиль";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5 col-12">
+
+        <div class="auth-card text-center">
+            <div class="mb-3">
+                <div style="width: 80px; height: 80px; background-color: #333; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary-orange);">
+                    <i class="fas fa-user fa-2x text-white"></i>
+                </div>
+            </div>
+
+            <h3 class="text-white">@user?.FirstName @user?.LastName</h3>
+            <div class="mb-3">
+                @if (User.IsInRole("Coach"))
+                {
+                    <span class="badge bg-warning text-dark px-3 py-2">ТРЕНЕР</span>
+                }
+                else
+                {
+                    <span class="badge bg-primary px-3 py-2">СТУДЕНТ</span>
+                }
+            </div>
+            <p class="text-muted">@user?.Email</p>
+
+            <hr class="bg-secondary" />
+
+            <div class="d-grid gap-2 text-start">
+                <button class="btn btn-dark text-start border-0 py-3">
+                    <i class="fas fa-cog me-2 text-muted"></i> Настройки
+                </button>
+                <button class="btn btn-dark text-start border-0 py-3">
+                    <i class="fas fa-bell me-2 text-muted"></i> Уведомления
+                </button>
+                <button class="btn btn-dark text-start border-0 py-3">
+                    <i class="fas fa-question-circle me-2 text-muted"></i> Помощь
+                </button>
+            </div>
+
+            <hr class="bg-secondary" />
+
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-outline-danger w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i> Выйти из аккаунта
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>

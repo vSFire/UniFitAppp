@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5 col-12">
+        <div class="auth-card mt-3">
+            <h2 class="text-center mb-4 text-white">Создать аккаунт</h2>
+
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+
+                <div class="mb-3">
+                    <label class="text-muted small">Имя</label>
+                    <input name="firstName" class="form-control" placeholder="Иван" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-muted small">Фамилия</label>
+                    <input name="lastName" class="form-control" placeholder="Иванов" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-muted small">Email</label>
+                    <input name="email" type="email" class="form-control" placeholder="student@university.com" required />
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-muted small">Пароль</label>
+                    <input name="password" type="password" class="form-control" placeholder="******" required />
+                </div>
+                <div class="mb-4">
+                    <label class="text-muted small mb-2 d-block">Кто вы?</label>
+
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="userRole" id="roleStudent" value="Student" checked autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="roleStudent">
+                            <i class="fas fa-user-graduate me-2"></i>Студент
+                        </label>
+
+                        <input type="radio" class="btn-check" name="userRole" id="roleCoach" value="Coach" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="roleCoach">
+                            <i class="fas fa-running me-2"></i>Тренер
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3">Зарегистрироваться</button>
+            </form>
+
+            <div class="text-center">
+                <span class="text-muted">Уже есть аккаунт?</span>
+                <a asp-action="Login" class="fw-bold">Войти</a>
+            </div>
+        </div>
+
+    </div>
+</div>

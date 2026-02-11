@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - UniFit</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+    <div class="container text-center mt-4 mb-3">
+        <img src="~/images/logo.png" alt="UniFit Logo" style="max-height: 60px; display: none;" onload="this.style.display='inline-block'" />
+        <h3 class="fw-bold" style="color: var(--primary-orange);">UniFit App</h3>
+    </div>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @if (User.Identity.IsAuthenticated)
+    {
+        string c = ViewContext.RouteData.Values["Controller"]?.ToString();
+        string a = ViewContext.RouteData.Values["Action"]?.ToString();
+        bool isCoach = User.IsInRole("Coach");
+
+        <nav class="bottom-nav">
+
+            @if (isCoach)
+            {
+                <a asp-controller="Coach" asp-action="Index"
+                   class="nav-item @(c == "Coach" && a == "Index" ? "active" : "")">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="Index"
+                   class="nav-item @(c == "Home" && a == "Index" ? "active" : "")">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Schedule</span>
+                </a>
+            }
+
+            @if (isCoach)
+            {
+                <a asp-controller="Coach" asp-action="Students"
+                   class="nav-item @(c == "Coach" && a == "Students" ? "active" : "")">
+                    <i class="fas fa-users"></i>
+                    <span>Students</span>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="Attendance"
+                   class="nav-item @(c == "Home" && a == "Attendance" ? "active" : "")">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Access</span>
+                </a>
+            }
+
+            @if (isCoach)
+            {
+                <div class="nav-item-center">
+                    <a asp-controller="Coach" asp-action="Create" class="text-decoration-none">
+                        <div class="plus-btn">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </a>
+                </div>
+            }
+
+            @if (isCoach)
+            {
+                <a asp-controller="Coach" asp-action="AllWorkouts"
+                   class="nav-item @(c == "Coach" && a == "AllWorkouts" ? "active" : "")">
+                    <i class="fas fa-dumbbell"></i>
+                    <span>Gym Workouts</span>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="MyWorkouts"
+                   class="nav-item @(c == "Home" && a == "MyWorkouts" ? "active" : "")">
+                    <i class="fas fa-dumbbell"></i>
+                    <span>My Workouts</span>
+                </a>
+            }
+
+            <a asp-controller="Account" asp-action="Profile"
+               class="nav-item @(c == "Account" && a == "Profile" ? "active" : "")">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    }
+
+
+
+</body>
+</html>

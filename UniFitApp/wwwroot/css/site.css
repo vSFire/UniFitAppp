@@ -1,0 +1,113 @@
+:root {
+    --primary-orange: #FF5E00; /* Твой оранжевый */
+    --bg-black: #121212; /* Фон всего приложения */
+    --bg-card: #1E1E1E; /* Фон карточек */
+    --text-white: #ffffff;
+    --text-gray: #a0a0a0;
+}
+
+body {
+    background-color: var(--bg-black);
+    color: var(--text-white);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin-bottom: 60px; /* Место для нижнего меню (сделаем позже) */
+}
+
+/* Стили карточек (как на твоем дизайне) */
+.auth-card {
+    background-color: var(--bg-card);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+}
+
+/* Поля ввода (Input) - чтобы были темными */
+.form-control {
+    background-color: #2C2C2E;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+    .form-control:focus {
+        background-color: #2C2C2E;
+        border-color: var(--primary-orange);
+        color: white;
+        box-shadow: none; /* Убираем синее свечение */
+    }
+
+/* Кнопки */
+.btn-primary {
+    background-color: var(--primary-orange);
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #e05200;
+    }
+
+/* Ссылки */
+a {
+    color: var(--primary-orange);
+    text-decoration: none;
+}
+/* --- Нижнее меню --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: #000000; /* Чисто черный низ */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #333;
+    z-index: 1000;
+    padding-bottom: 10px; /* Учет полоски айфона */
+}
+
+.nav-item {
+    color: var(--text-gray);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 10px;
+    transition: color 0.3s;
+}
+
+    .nav-item i {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    .nav-item.active, .nav-item:hover {
+        color: var(--primary-orange);
+    }
+
+/* Центральная кнопка ПЛЮС */
+.nav-item-center {
+    position: relative;
+    top: -25px; /* Приподнимаем кнопку */
+}
+
+.plus-btn {
+    width: 55px;
+    height: 55px;
+    background-color: var(--primary-orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 4px 10px rgba(255, 94, 0, 0.4);
+    border: 4px solid var(--bg-black); /* Обводка под цвет фона */
+}
