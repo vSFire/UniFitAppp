@@ -8,11 +8,12 @@ namespace UniFitApp.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        private readonly IWebHostEnvironment _appEnvironment; // <--- ДОБАВИЛИ ЭТО
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IWebHostEnvironment appEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _appEnvironment = appEnvironment; // <--- И ЭТО
         }
 
         // GET: Страница регистрации
@@ -106,6 +107,48 @@ namespace UniFitApp.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+        // СТРАНИЦА: Настройки профиля
+        [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return View(user);
+        }
+
+        // ДЕЙСТВИЕ: Сохранить настройки и фото
+        [HttpPost]
+        public async Task<IActionResult> Settings(AppUser model, IFormFile? avatarFile)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            // Обновляем имена
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+
+            // Если загрузили новое фото
+            if (avatarFile != null)
+            {
+                // 1. Придумываем уникальное имя файлу (чтобы не затереть другие)
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
+
+                // 2. Путь к папке wwwroot/avatars
+                string path = Path.Combine(_appEnvironment.WebRootPath, "avatars");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+                // 3. Сохраняем файл на диск
+                using (var fileStream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(fileStream);
+                }
+
+                // 4. Записываем путь в базу
+                user.ProfilePictureUrl = "/avatars/" + fileName;
+            }
+
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile");
         }
     }
 }

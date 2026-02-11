@@ -9,5 +9,6 @@ namespace UniFitApp.Models
         public string FirstName { get; set; } // Имя
         public string LastName { get; set; }  // Фамилия
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? ProfilePictureUrl { get; set; }
     }
 }

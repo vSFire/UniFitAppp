@@ -1,0 +1,54 @@
+﻿@model UniFitApp.Models.AppUser
+@{
+    ViewData["Title"] = "Настройки";
+}
+
+<div class="d-flex align-items-center mb-4">
+    <a asp-action="Profile" class="text-decoration-none text-muted me-3">
+        <i class="fas fa-chevron-left fa-lg"></i>
+    </a>
+    <h4 class="fw-bold text-white mb-0">Edit Profile</h4>
+</div>
+
+<div class="auth-card">
+    <form asp-action="Settings" method="post" enctype="multipart/form-data">
+
+        <div class="text-center mb-4">
+            <div class="position-relative d-inline-block">
+                @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                {
+                    <img src="@Model.ProfilePictureUrl" class="rounded-circle border border-warning" style="width: 100px; height: 100px; object-fit: cover;">
+                }
+                else
+                {
+                    <div style="width: 100px; height: 100px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 2px solid var(--primary-orange);">
+                        <span class="fs-1 text-white">@Model.FirstName.Substring(0, 1)</span>
+                    </div>
+                }
+
+                <label for="avatarUpload" class="position-absolute bottom-0 end-0 bg-warning text-dark rounded-circle p-2" style="cursor: pointer;">
+                    <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" id="avatarUpload" name="avatarFile" class="d-none" accept="image/*">
+            </div>
+            <p class="text-muted small mt-2">Tap icon to change photo</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="text-muted small">First Name</label>
+            <input asp-for="FirstName" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="text-muted small">Last Name</label>
+            <input asp-for="LastName" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="text-muted small">Phone Number</label>
+            <input asp-for="PhoneNumber" class="form-control" placeholder="+7..." />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold mt-3">Save Changes</button>
+    </form>
+</div>

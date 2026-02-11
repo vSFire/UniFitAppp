@@ -36,6 +36,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication(); // <-- Добавить эту строку (Проверка кто это)
+app.UseStaticFiles();
 app.UseAuthorization();  // <-- Эта уже была (Проверка прав доступа)
 
 app.MapControllerRoute(
