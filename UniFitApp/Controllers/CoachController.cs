@@ -205,7 +205,7 @@ namespace UniFitApp.Controllers
             var notification = new Notification
             {
                 UserId = studentId,
-                Message = $"Сообщение от тренера {currentUser.FirstName}: {message}",
+                Message = $"Сообщение от тренераа {currentUser.FirstName}: {message}",
                 CreatedAt = DateTime.UtcNow
             };
 
