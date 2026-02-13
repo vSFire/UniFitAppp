@@ -10,13 +10,15 @@ namespace UniFitApp.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly IWebHostEnvironment _appEnvironment; // <--- ДОБАВИЛИ ЭТО
+        private readonly IWebHostEnvironment _appEnvironment;
         private readonly ApplicationDbContext _context;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IWebHostEnvironment appEnvironment)
+
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IWebHostEnvironment appEnvironment, ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _appEnvironment = appEnvironment; // <--- И ЭТО
+            _appEnvironment = appEnvironment;
+            _context = context;
         }
 
         // GET: Страница регистрации
@@ -60,11 +62,17 @@ namespace UniFitApp.Controllers
             }
             return View();
         }
-        // --- ЛОГИН (ВХОД) ---
 
+        // --- ЛОГИН (ВХОД) ---
+        // ИЗМЕНЕНО: Добавлена проверка, если пользователь уже вошел
         [HttpGet]
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Coach")) return RedirectToAction("Index", "Coach");
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -94,13 +102,14 @@ namespace UniFitApp.Controllers
         }
 
         // --- ЛОГАУТ (ВЫХОД) ---
-
-        [HttpPost] // Важно: выход только через POST запрос для безопасности
+        // ИЗМЕНЕНО: Возврат на страницу Login вместо Home
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
+
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -108,11 +117,13 @@ namespace UniFitApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             return View(user);
         }
+
         [HttpGet]
         public IActionResult AccessDenied()
         {
             return View();
         }
+
         // СТРАНИЦА: Настройки профиля
         [HttpGet]
         public async Task<IActionResult> Settings()
@@ -155,6 +166,7 @@ namespace UniFitApp.Controllers
             await _userManager.UpdateAsync(user);
             return RedirectToAction("Profile");
         }
+
         [HttpGet]
         public async Task<IActionResult> Notifications()
         {
@@ -168,6 +180,7 @@ namespace UniFitApp.Controllers
 
             return View(notifications);
         }
+
         [HttpGet]
         public IActionResult Help() => View();
     }

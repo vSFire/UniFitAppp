@@ -9,6 +9,7 @@ namespace UniFitApp.Controllers
 {
     // –азрешаем доступ всем (даже без входа - чтобы видели расписание), 
     // но записыватьс€ смогут только вошедшие.
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
