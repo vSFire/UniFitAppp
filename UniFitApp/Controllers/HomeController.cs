@@ -21,17 +21,20 @@ namespace UniFitApp.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index()
+        // Добавили параметр date
+        public async Task<IActionResult> Index(DateTime? date)
         {
-            if (User.IsInRole("Coach"))
-            {
-                return RedirectToAction("Index", "Coach");
-            }
-            // Получаем список всех будущих тренировок, сортируем по времени
+            var user = await _userManager.GetUserAsync(User);
+
+            // Если дата не выбрана - берем сегодня
+            var selectedDate = date ?? DateTime.Today;
+            ViewBag.SelectedDate = selectedDate; // Передаем дату в View, чтобы подсветить кнопку
+
+            // Фильтруем тренировки по выбранному дню
             var workouts = await _context.Workouts
-                .Include(w => w.Coach)       // Подгружаем имя тренера
-                .Include(w => w.Enrollments) // Подгружаем записи (чтобы считать места)
-                .Where(w => w.StartTime >= DateTime.UtcNow.AddHours(-5)) // Только актуальные (с небольшим запасом)
+                .Include(w => w.Coach)
+                .Include(w => w.Enrollments)
+                .Where(w => w.StartTime.Date == selectedDate.Date) // <--- ФИЛЬТР
                 .OrderBy(w => w.StartTime)
                 .ToListAsync();
 

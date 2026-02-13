@@ -17,17 +17,24 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-between mb-4 text-center overflow-auto pb-2">
-    @for (int i = 0; i < 5; i++)
-    {
-        var day = DateTime.Now.AddDays(i);
-        bool isToday = i == 0;
-        string bgClass = isToday ? "bg-warning text-black" : "bg-dark text-muted";
+<div class="d-flex justify-content-between overflow-auto mb-4 pb-2">
+    @{
+        var selectedDate = (DateTime)(ViewBag.SelectedDate ?? DateTime.Today);
+        var today = DateTime.Today;
+    }
 
-        <div class="rounded p-2 mx-1" style="min-width: 60px; @(isToday ? "background-color: var(--primary-orange) !important;" : "background-color: #1E1E1E;")">
-            <small class="d-block fw-bold text-uppercase" style="font-size: 10px;">@day.ToString("ddd")</small>
-            <span class="h5 fw-bold">@day.Day</span>
-        </div>
+    @for (int i = 0; i < 7; i++)
+    {
+        var day = today.AddDays(i);
+        var isActive = day.Date == selectedDate.Date;
+
+        <a asp-action="Index" asp-route-date="@day.ToString("yyyy-MM-dd")"
+           class="text-decoration-none text-center rounded p-2 mx-1 flex-fill @(isActive ? "bg-warning text-dark" : "bg-dark text-muted")"
+           style="min-width: 60px; border: 1px solid #333;">
+
+            <div class="small fw-bold">@day.ToString("ddd")</div>
+            <div class="fs-4 fw-bold">@day.Day</div>
+        </a>
     }
 </div>
 

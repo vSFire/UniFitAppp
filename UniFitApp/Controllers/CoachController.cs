@@ -21,12 +21,17 @@ namespace UniFitApp.Controllers
         }
 
         // 1. ДАШБОРД ТРЕНЕРА
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? date)
         {
             var user = await _userManager.GetUserAsync(User);
+
+            var selectedDate = date ?? DateTime.Today;
+            ViewBag.SelectedDate = selectedDate;
+
             var myWorkouts = await _context.Workouts
                 .Include(w => w.Enrollments)
                 .Where(w => w.CoachId == user.Id)
+                .Where(w => w.StartTime.Date == selectedDate.Date) // <--- ФИЛЬТР
                 .OrderBy(w => w.StartTime)
                 .ToListAsync();
 
