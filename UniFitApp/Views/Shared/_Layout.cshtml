@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using UniFitApp.Models
 @inject UserManager<AppUser> UserManager
 
 <!DOCTYPE html>
@@ -22,8 +23,18 @@
             @if (User.Identity.IsAuthenticated)
             {
                 var currentUser = await UserManager.GetUserAsync(User);
+
+                // --- БЕЗОПАСНАЯ ЛОГИКА АВАТАРКИ ---
+                // Получаем первую букву или "U", если имя пустое
+                var userInitial = "U";
+                if (currentUser != null && !string.IsNullOrEmpty(currentUser.FirstName))
+                {
+                    userInitial = currentUser.FirstName.Substring(0, 1).ToUpper();
+                }
+                // ----------------------------------
+
                 <a asp-controller="Account" asp-action="Profile" class="text-decoration-none">
-                    @if (!string.IsNullOrEmpty(currentUser?.ProfilePictureUrl))
+                    @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfilePictureUrl))
                     {
                         <img src="@currentUser.ProfilePictureUrl"
                              alt="Avatar"
@@ -34,7 +45,7 @@
                     {
                         <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
                              style="width: 40px; height: 40px; border: 2px solid var(--primary-orange);">
-                            <span class="text-white fw-bold">@currentUser?.FirstName?.Substring(0, 1)</span>
+                            <span class="text-white fw-bold">@userInitial</span>
                         </div>
                     }
                 </a>

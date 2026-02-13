@@ -22,21 +22,40 @@ namespace UniFitApp.Controllers
         }
 
         // Добавили параметр date
-        public async Task<IActionResult> Index(DateTime? date)
+        public async Task<IActionResult> Index(DateTime? date, bool showBookedOnly = false)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            // Если дата не выбрана - берем сегодня
-            var selectedDate = date ?? DateTime.Today;
-            ViewBag.SelectedDate = selectedDate; // Передаем дату в View, чтобы подсветить кнопку
+            // Дата нужна для подсветки календаря и режима "All Classes"
+            var selectedDate = date.HasValue
+                ? DateTime.SpecifyKind(date.Value, DateTimeKind.Utc)
+                : DateTime.UtcNow.Date;
 
-            // Фильтруем тренировки по выбранному дню
-            var workouts = await _context.Workouts
-                .Include(w => w.Coach)
-                .Include(w => w.Enrollments)
-                .Where(w => w.StartTime.Date == selectedDate.Date) // <--- ФИЛЬТР
-                .OrderBy(w => w.StartTime)
-                .ToListAsync();
+            ViewBag.SelectedDate = selectedDate;
+            ViewBag.ShowBookedOnly = showBookedOnly;
+
+            List<Workout> workouts;
+
+            if (showBookedOnly)
+            {
+                // РЕЖИМ BOOKED: Игнорируем дату, грузим ВСЕ записи студента
+                workouts = await _context.Workouts
+                    .Include(w => w.Coach)
+                    .Include(w => w.Enrollments)
+                    .Where(w => w.Enrollments.Any(e => e.StudentId == user.Id)) // Только где я записан
+                    .OrderBy(w => w.StartTime) // Сортируем по времени
+                    .ToListAsync();
+            }
+            else
+            {
+                // РЕЖИМ ALL CLASSES: Фильтруем по конкретному дню
+                workouts = await _context.Workouts
+                    .Include(w => w.Coach)
+                    .Include(w => w.Enrollments)
+                    .Where(w => w.StartTime >= selectedDate && w.StartTime < selectedDate.AddDays(1))
+                    .OrderBy(w => w.StartTime)
+                    .ToListAsync();
+            }
 
             return View(workouts);
         }

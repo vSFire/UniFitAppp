@@ -8,63 +8,55 @@
 
 <div class="row justify-content-center mt-4">
     <div class="col-md-5 col-12">
+        <div class="auth-card text-center pt-5 pb-5">
 
-        <div class="auth-card text-center">
-            <div class="mb-3">
+            <div class="mb-3 position-relative d-inline-block">
                 @if (!string.IsNullOrEmpty(user?.ProfilePictureUrl))
                 {
-                    <img src="@user.ProfilePictureUrl"
-                         alt="Avatar"
-                         class="rounded-circle"
-                         style="width: 100px; height: 100px; object-fit: cover; border: 2px solid var(--primary-orange); margin: 0 auto; display: block;">
+                    <img src="@user.ProfilePictureUrl" alt="Avatar" class="rounded-circle shadow"
+                         style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--primary-orange);">
                 }
                 else
                 {
-                    <div style="width: 100px; height: 100px; background-color: #333; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary-orange);">
-                        <i class="fas fa-user fa-3x text-white"></i>
+                    <div style="width: 120px; height: 120px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--primary-orange);">
+                        <span class="fw-bold text-white fs-1">@user?.FirstName?.Substring(0, 1)</span>
                     </div>
                 }
             </div>
 
-            <h3 class="text-white mt-3">@user?.FirstName @user?.LastName</h3>
+            <h3 class="text-white mt-2 mb-1">@user?.FirstName @user?.LastName</h3>
+            <p class="text-muted mb-3">@user?.Email</p>
 
-            <div class="mb-3">
+            <div class="mb-4">
                 @if (User.IsInRole("Coach"))
                 {
-                    <span class="badge bg-warning text-dark px-3 py-2">ТРЕНЕР</span>
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">COACH</span>
                 }
                 else
                 {
-                    <span class="badge bg-primary px-3 py-2">СТУДЕНТ</span>
+
+                    <span class="badge bg-primary px-3 py-2 rounded-pill">STUDENT</span>
                 }
             </div>
 
-            <p class="text-muted">@user?.Email</p>
-
-            <hr class="bg-secondary" />
-
-            <div class="list-group list-group-flush text-start rounded">
-                <a asp-controller="Account" asp-action="Settings" class="list-group-item list-group-item-action bg-dark text-white border-secondary d-flex align-items-center p-3">
-                    <i class="fas fa-cog me-3 text-muted" style="width: 20px;"></i> Настройки
+            <div class="list-group list-group-flush text-start rounded mb-4 shadow-sm">
+                <a asp-action="Settings" class="list-group-item list-group-item-action bg-dark text-white border-secondary p-3">
+                    <i class="fas fa-cog me-3 text-warning" style="width: 20px;"></i> Настройки
                 </a>
-
-                <a asp-controller="Account" asp-action="Notifications" class="list-group-item list-group-item-action bg-dark text-white border-secondary d-flex align-items-center p-3">
-                    <i class="fas fa-bell me-3 text-muted" style="width: 20px;"></i> Уведомления
+                <a asp-action="Notifications" class="list-group-item list-group-item-action bg-dark text-white border-secondary p-3">
+                    <i class="fas fa-bell me-3 text-warning" style="width: 20px;"></i> Уведомления
                 </a>
-
-                <a asp-controller="Account" asp-action="Help" class="list-group-item list-group-item-action bg-dark text-white border-secondary d-flex align-items-center p-3">
-                    <i class="fas fa-question-circle me-3 text-muted" style="width: 20px;"></i> Помощь
+                <a asp-action="Help" class="list-group-item list-group-item-action bg-dark text-white border-secondary p-3">
+                    <i class="fas fa-question-circle me-3 text-warning" style="width: 20px;"></i> Помощь
                 </a>
             </div>
 
-            <hr class="bg-secondary" />
-
-            <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="btn btn-outline-danger w-100">
-                    <i class="fas fa-sign-out-alt me-2"></i> Выйти из аккаунта
+            <form asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-outline-danger w-100 py-2">
+                    <i class="fas fa-sign-out-alt me-2"></i> Sign Out
                 </button>
             </form>
-        </div>
 
+        </div>
     </div>
 </div>

@@ -21,17 +21,26 @@ namespace UniFitApp.Controllers
         }
 
         // 1. ДАШБОРД ТРЕНЕРА
+        // 1. ДАШБОРД ТРЕНЕРА
         public async Task<IActionResult> Index(DateTime? date)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var selectedDate = date ?? DateTime.Today;
+            // ИСПРАВЛЕНИЕ ОШИБКИ POSTGRESQL:
+            // База требует UTC. DateTime.Today дает Local, поэтому используем UtcNow.
+            // Если дата пришла из календаря (date), ставим ей метку UTC принудительно.
+            var selectedDate = date.HasValue
+                ? DateTime.SpecifyKind(date.Value, DateTimeKind.Utc)
+                : DateTime.UtcNow.Date;
+
             ViewBag.SelectedDate = selectedDate;
 
             var myWorkouts = await _context.Workouts
                 .Include(w => w.Enrollments)
                 .Where(w => w.CoachId == user.Id)
-                .Where(w => w.StartTime.Date == selectedDate.Date) // <--- ФИЛЬТР
+                // Фильтруем по диапазону (от начала дня до начала следующего), 
+                // это самый надежный способ сравнения дат в SQL
+                .Where(w => w.StartTime >= selectedDate && w.StartTime < selectedDate.AddDays(1))
                 .OrderBy(w => w.StartTime)
                 .ToListAsync();
 
