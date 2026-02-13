@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Написать сообщение";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="auth-card">
+            <h3 class="text-white mb-4">Написать для @ViewBag.StudentName</h3>
+
+            <form asp-action="SendMessage" method="post">
+                <input type="hidden" name="studentId" value="@ViewBag.StudentId" />
+
+                <div class="mb-3">
+                    <label class="text-muted small">Текст сообщения</label>
+                    <textarea name="message" class="form-control" rows="5" required placeholder="Например: Не забудь взять форму на завтра..."></textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-warning fw-bold py-3">Отправить</button>
+                    <a asp-action="Students" class="btn btn-outline-light">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

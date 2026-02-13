@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using UniFitApp.Data;
 using UniFitApp.Models;
 
 namespace UniFitApp.Controllers
@@ -9,6 +11,7 @@ namespace UniFitApp.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IWebHostEnvironment _appEnvironment; // <--- ДОБАВИЛИ ЭТО
+        private readonly ApplicationDbContext _context;
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IWebHostEnvironment appEnvironment)
         {
             _userManager = userManager;
@@ -152,5 +155,20 @@ namespace UniFitApp.Controllers
             await _userManager.UpdateAsync(user);
             return RedirectToAction("Profile");
         }
+        [HttpGet]
+        public async Task<IActionResult> Notifications()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            // Загружаем уведомления (сначала новые)
+            var notifications = _context.Notifications
+                .Where(n => n.UserId == user.Id)
+                .OrderByDescending(n => n.CreatedAt)
+                .ToList();
+
+            return View(notifications);
+        }
+        [HttpGet]
+        public IActionResult Help() => View();
     }
 }

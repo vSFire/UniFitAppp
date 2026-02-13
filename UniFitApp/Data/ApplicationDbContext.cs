@@ -13,6 +13,7 @@ namespace UniFitApp.Data
         }
         public DbSet<Workout> Workouts { get; set; }     // Тренировки
         public DbSet<Enrollment> Enrollments { get; set; } // Записи студентов
+        public DbSet<Notification> Notifications { get; set; }
     }
 
 }

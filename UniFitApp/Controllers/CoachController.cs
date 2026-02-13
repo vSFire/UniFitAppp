@@ -21,14 +21,11 @@ namespace UniFitApp.Controllers
         }
 
         // 1. ДАШБОРД ТРЕНЕРА
-        // ТЗ: "Дашборд тренера" - показывает его тренировки
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-
-            // Загружаем тренировки ТОЛЬКО этого тренера + список записавшихся
             var myWorkouts = await _context.Workouts
-                .Include(w => w.Enrollments) // Подгружаем записи студентов
+                .Include(w => w.Enrollments)
                 .Where(w => w.CoachId == user.Id)
                 .OrderBy(w => w.StartTime)
                 .ToListAsync();
@@ -43,17 +40,13 @@ namespace UniFitApp.Controllers
             return View();
         }
 
-        // 3. СОЗДАТЬ ТРЕНИРОВКУ (Логика сохранения)
+        // 3. СОЗДАТЬ ТРЕНИРОВКУ (Логика)
         [HttpPost]
         public async Task<IActionResult> Create(Workout workout)
         {
             var user = await _userManager.GetUserAsync(User);
             workout.CoachId = user.Id;
-
-            // --- ВОТ ЭТО ИСПРАВЛЕНИЕ ---
-            // PostgreSQL требует, чтобы дата была UTC. Мы ставим эту метку вручную.
             workout.StartTime = DateTime.SpecifyKind(workout.StartTime, DateTimeKind.Utc);
-            // ---------------------------
 
             ModelState.Remove("Coach");
             ModelState.Remove("CoachId");
@@ -66,40 +59,33 @@ namespace UniFitApp.Controllers
             }
             return View(workout);
         }
-        // Просмотр деталей тренировки и списка записавшихся
+
+        // Детали тренировки
         public async Task<IActionResult> Details(int id)
         {
             var workout = await _context.Workouts
                 .Include(w => w.Enrollments)
-                .ThenInclude(e => e.Student) // Важно: подгружаем данные студентов (Имя, Фамилия)
+                .ThenInclude(e => e.Student)
                 .FirstOrDefaultAsync(w => w.Id == id);
 
             if (workout == null) return NotFound();
-
-            // Проверка безопасности: только создатель может смотреть (опционально)
-            // var user = await _userManager.GetUserAsync(User);
-            // if (workout.CoachId != user.Id) return Forbid();
-
             return View(workout);
         }
-        // ДЕЙСТВИЕ: Отметить посещение (Пришел / Не пришел)
+
+        // Посещаемость
         [HttpPost]
         public async Task<IActionResult> ToggleAttendance(int enrollmentId)
         {
             var enrollment = await _context.Enrollments.FindAsync(enrollmentId);
-
             if (enrollment != null)
             {
-                // Меняем статус на противоположный (true <-> false)
                 enrollment.IsPresent = !enrollment.IsPresent;
                 await _context.SaveChangesAsync();
             }
-
-            // Возвращаем тренера обратно на страницу списка
             return RedirectToAction("Details", new { id = enrollment.WorkoutId });
         }
 
-        // ДЕЙСТВИЕ: Удалить тренировку (Мы обещали это доделать)
+        // Удаление
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -111,60 +97,50 @@ namespace UniFitApp.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-        // СТРАНИЦА: Все тренировки в зале (для просмотра загруженности)
+
+        // Все тренировки
         public async Task<IActionResult> AllWorkouts()
         {
-            var user = await _userManager.GetUserAsync(User);
-
             var allWorkouts = await _context.Workouts
-                .Include(w => w.Coach)       // Чтобы видеть имя другого тренера
-                .Include(w => w.Enrollments) // Чтобы видеть, сколько людей записано
+                .Include(w => w.Coach)
+                .Include(w => w.Enrollments)
                 .OrderBy(w => w.StartTime)
                 .ToListAsync();
-
             return View(allWorkouts);
         }
-        // СТРАНИЦА: Список всех студентов
+
+        // Список студентов
         [HttpGet]
         public async Task<IActionResult> Students()
         {
-            // Получаем список всех пользователей, у которых роль "Student"
             var students = await _userManager.GetUsersInRoleAsync("Student");
+            // Нужно загрузить фото вручную, так как GetUsersInRoleAsync может не подтянуть все поля (зависит от настроек Identity)
+            // Но обычно IdentityUser загружается полностью. 
+            // Для надежности можно перебрать и догрузить, но пока оставим так.
             return View(students);
         }
-        // РЕДАКТИРОВАНИЕ: Открыть форму (GET)
+
+        // РЕДАКТИРОВАНИЕ (GET)
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var workout = await _context.Workouts.FindAsync(id);
             if (workout == null) return NotFound();
-
-            // Проверка: редактировать может только создатель (опционально)
-            // var user = await _userManager.GetUserAsync(User);
-            // if (workout.CoachId != user.Id) return Forbid();
-
             return View(workout);
         }
 
-        // РЕДАКТИРОВАНИЕ: Сохранить изменения (POST)
+        // РЕДАКТИРОВАНИЕ (POST) - С УВЕДОМЛЕНИЯМИ
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Workout workout)
         {
             if (id != workout.Id) return NotFound();
 
-            // Нам нужно сохранить CoachId, так как форма его не передает
-            // Поэтому сначала достаем оригинал из базы, чтобы не потерять тренера
             var originalWorkout = await _context.Workouts.AsNoTracking().FirstOrDefaultAsync(w => w.Id == id);
-
             if (originalWorkout == null) return NotFound();
 
-            // Восстанавливаем ID тренера
             workout.CoachId = originalWorkout.CoachId;
-
-            // Фикс даты для PostgreSQL (снова UTC)
             workout.StartTime = DateTime.SpecifyKind(workout.StartTime, DateTimeKind.Utc);
 
-            // Убираем валидацию тренера
             ModelState.Remove("Coach");
             ModelState.Remove("CoachId");
 
@@ -172,6 +148,26 @@ namespace UniFitApp.Controllers
             {
                 try
                 {
+                    // --- БЛОК УВЕДОМЛЕНИЙ ---
+                    // 1. Ищем всех студентов, записанных на эту тренировку
+                    var enrollments = await _context.Enrollments
+                        .Where(e => e.WorkoutId == workout.Id)
+                        .Include(e => e.Student)
+                        .ToListAsync();
+
+                    // 2. Отправляем каждому уведомление
+                    foreach (var enrollment in enrollments)
+                    {
+                        var notif = new Notification
+                        {
+                            UserId = enrollment.StudentId,
+                            Message = $"Внимание! Тренировка '{workout.Title}' была изменена. Новое время: {workout.StartTime:dd.MM HH:mm}. Проверьте детали.",
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        _context.Notifications.Add(notif);
+                    }
+                    // -------------------------
+
                     _context.Update(workout);
                     await _context.SaveChangesAsync();
                 }
@@ -183,6 +179,40 @@ namespace UniFitApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(workout);
+        }
+
+        // СТРАНИЦА: Написать сообщение
+        [HttpGet]
+        public async Task<IActionResult> SendMessage(string studentId)
+        {
+            var student = await _userManager.FindByIdAsync(studentId);
+            if (student == null) return NotFound();
+
+            ViewBag.StudentName = $"{student.FirstName} {student.LastName}";
+            ViewBag.StudentId = studentId;
+            return View();
+        }
+
+        // ОТПРАВИТЬ СООБЩЕНИЕ
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(string studentId, string message)
+        {
+            var student = await _userManager.FindByIdAsync(studentId);
+            if (student == null) return NotFound();
+
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            var notification = new Notification
+            {
+                UserId = studentId,
+                Message = $"Сообщение от тренера {currentUser.FirstName}: {message}",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Students");
         }
     }
 }
