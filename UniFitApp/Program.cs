@@ -13,15 +13,17 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 // ------------------------------
+
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
-    options.Password.RequireDigit = false; // Упростим пароли для тестов
+    options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 4;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
+
 var app = builder.Build();
 
 // Настройка HTTP-конвейера
@@ -32,30 +34,32 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(); // Оставляем только один вызов здесь
 
 app.UseRouting();
-app.UseAuthentication(); // <-- Добавить эту строку (Проверка кто это)
-app.UseStaticFiles();
-app.UseAuthorization();  // <-- Эта уже была (Проверка прав доступа)
 
+app.UseAuthentication(); // Проверка кто это
+app.UseAuthorization();  // Проверка прав доступа
+
+// Маршрут по умолчанию: Сначала Login.
+// А Login (Get) сам перекинет на Welcome, если юзер уже вошел.
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
+
+// Создание ролей при старте
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-    // Список ролей, которые нам нужны по ТЗ
     string[] roleNames = { "Student", "Coach" };
 
     foreach (var roleName in roleNames)
     {
-        // Если роли нет - создаем её
         if (!await roleManager.RoleExistsAsync(roleName))
         {
             await roleManager.CreateAsync(new IdentityRole(roleName));
         }
     }
 }
+
 app.Run();

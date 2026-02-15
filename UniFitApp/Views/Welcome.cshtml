@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@model UniFitApp.Models.AppUser
+
+@{
+    ViewData["Title"] = "Welcome";
+    bool isCoach = await UserManager.IsInRoleAsync(Model, "Coach");
+}
+
+<div class="container-fluid px-0 mb-5">
+
+    <div class="position-relative text-center text-white mb-5">
+
+        <div class="position-absolute w-100 h-100 d-flex flex-column justify-content-center align-items-center"
+             style="z-index: 10; background: rgba(0, 0, 0, 0.6); top: 0; left: 0;">
+
+            <h1 class="display-4 fw-bold mb-3">Добро пожаловать, <span style="color: var(--primary-orange);">@Model.FirstName!</span></h1>
+            <p class="lead mb-4">Твой путь к совершенству начинается в UniFit.</p>
+
+            @if (isCoach)
+            {
+                <a asp-controller="Coach" asp-action="Index" class="btn btn-warning btn-lg px-5 py-3 fw-bold rounded-pill shadow">
+                    <i class="fas fa-th-large me-2"></i> Перейти в Дашборд
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="Index" class="btn btn-warning btn-lg px-5 py-3 fw-bold rounded-pill shadow">
+                    <i class="fas fa-calendar-alt me-2"></i> Смотреть Расписание
+                </a>
+            }
+        </div>
+
+        <div id="gymCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner" style="height: 500px; border-radius: 0 0 20px 20px; overflow: hidden;">
+
+                <div class="carousel-item active h-100">
+                    <div class="w-100 h-100" style="background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop') center/cover no-repeat;"></div>
+                </div>
+
+                <div class="carousel-item h-100">
+                    <div class="w-100 h-100" style="background: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=1375&auto=format&fit=crop') center/cover no-repeat;"></div>
+                </div>
+
+                <div class="carousel-item h-100">
+                    <div class="w-100 h-100" style="background: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1470&auto=format&fit=crop') center/cover no-repeat;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm" style="background-color: #1E1E1E; border-radius: 15px;">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-map-marker-alt fa-3x text-secondary"></i>
+                        </div>
+                        <h5 class="text-white fw-bold">Где нас найти</h5>
+                        <p class="text-muted small">Университетский кампус, Корпус Б, 1 этаж.</p>
+                        <hr class="bg-secondary opacity-25">
+                        <p class="text-warning mb-0"><i class="far fa-clock me-1"></i> 07:00 - 23:00</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm" style="background-color: #1E1E1E; border-radius: 15px;">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-dumbbell fa-3x text-secondary"></i>
+                        </div>
+                        <h5 class="text-white fw-bold">Наши Тренеры</h5>
+                        <p class="text-muted small">Профессионалы, которые помогут тебе достичь результата.</p>
+                        <a asp-controller="@(isCoach ? "Coach" : "Home")" asp-action="@(isCoach ? "AllWorkouts" : "Index")" class="btn btn-outline-warning btn-sm mt-2 rounded-pill">
+                            Посмотреть тренировки
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm" style="background-color: #1E1E1E; border-radius: 15px;">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-bullhorn fa-3x text-secondary"></i>
+                        </div>
+                        <h5 class="text-white fw-bold">Новости</h5>
+                        <p class="text-muted small">Новое оборудование в зоне кардио уже доступно!</p>
+                        <span class="badge bg-danger">NEW</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
