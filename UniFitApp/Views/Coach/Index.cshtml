@@ -1,10 +1,14 @@
-﻿@model IEnumerable<UniFitApp.Models.Workout>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@model IEnumerable<UniFitApp.Models.Workout>
 
 @{
     ViewData["Title"] = "Дашборд тренера";
+    var currentUser = await UserManager.GetUserAsync(User);
     var selectedDate = (DateTime)(ViewBag.SelectedDate ?? DateTime.UtcNow.Date);
+    var showAll = (bool)(ViewBag.ShowAll ?? false);
 
-    // Статистика (с защитой от null)
+    // Статистика (считаем сумму всех студентов на сегодня)
     int totalStudents = Model.Sum(w => w.Enrollments?.Count ?? 0);
     int activeHours = Model.Count();
 }
@@ -29,7 +33,9 @@
         var day = today.AddDays(i);
         var isActive = day.Date == selectedDate.Date;
 
-        <a asp-action="Index" asp-route-date="@day.ToString("yyyy-MM-dd")"
+        <a asp-action="Index"
+           asp-route-date="@day.ToString("yyyy-MM-dd")"
+           asp-route-showAll="@showAll"
            class="text-decoration-none text-center rounded p-2 mx-1 flex-fill @(isActive ? "bg-warning text-dark" : "bg-dark text-muted")"
            style="min-width: 60px; border: 1px solid #333;">
             <div class="small fw-bold">@day.ToString("ddd")</div>
@@ -38,20 +44,38 @@
     }
 </div>
 
-<div class="row mb-4">
-    <div class="col-6">
-        <div class="p-3 rounded" style="background-color: #1E1E1E; border: 1px solid #333;">
-            <small class="text-muted text-uppercase" style="font-size: 10px;"><i class="fas fa-users me-1"></i> Students</small>
-            <h2 class="fw-bold text-white mt-1 mb-0">@totalStudents</h2>
-        </div>
-    </div>
-    <div class="col-6">
-        <div class="p-3 rounded" style="background-color: #1E1E1E; border: 1px solid #333;">
-            <small class="text-muted text-uppercase" style="font-size: 10px;"><i class="fas fa-clock me-1"></i> Classes</small>
-            <h2 class="fw-bold text-white mt-1 mb-0">@activeHours</h2>
-        </div>
-    </div>
+<div class="d-flex mb-4 bg-dark rounded p-1 border border-secondary" style="max-width: 350px;">
+    <a asp-action="Index"
+       asp-route-date="@selectedDate.ToString("yyyy-MM-dd")"
+       asp-route-showAll="false"
+       class="flex-fill btn btn-sm rounded fw-bold @(!showAll ? "bg-warning text-dark" : "text-muted")">
+        Мои тренировки
+    </a>
+    <a asp-action="Index"
+       asp-route-date="@selectedDate.ToString("yyyy-MM-dd")"
+       asp-route-showAll="true"
+       class="flex-fill btn btn-sm rounded fw-bold @(showAll ? "bg-warning text-dark" : "text-muted")">
+        Все тренировки зала
+    </a>
 </div>
+
+@if (!showAll)
+{
+    <div class="row mb-4">
+        <div class="col-6">
+            <div class="p-3 rounded" style="background-color: #1E1E1E; border: 1px solid #333;">
+                <small class="text-muted text-uppercase" style="font-size: 10px;"><i class="fas fa-users me-1"></i> Students Today</small>
+                <h2 class="fw-bold text-white mt-1 mb-0">@totalStudents</h2>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="p-3 rounded" style="background-color: #1E1E1E; border: 1px solid #333;">
+                <small class="text-muted text-uppercase" style="font-size: 10px;"><i class="fas fa-clock me-1"></i> Classes Today</small>
+                <h2 class="fw-bold text-white mt-1 mb-0">@activeHours</h2>
+            </div>
+        </div>
+    </div>
+}
 
 <div class="mb-4">
     <a asp-action="Create" class="btn btn-warning w-100 fw-bold py-3 shadow-sm" style="border-radius: 12px;">
@@ -74,37 +98,56 @@ else
 {
     @foreach (var item in Model)
     {
-        // Считаем заполненность
         int count = item.Enrollments?.Count ?? 0;
         int cap = item.Capacity;
         int percent = (cap > 0) ? (count * 100 / cap) : 0;
-        string statusColor = percent >= 100 ? "text-danger" : "text-success";
 
-        <div class="card mb-3 border-0" style="background-color: #1E1E1E; border-radius: 15px; border-left: 5px solid var(--primary-orange) !important;">
+        bool isMyClass = item.CoachId == currentUser.Id;
+
+        <div class="card mb-3 border-0" style="background-color: #1E1E1E; border-radius: 15px; border-left: 5px solid @(isMyClass ? "var(--primary-orange)" : "#6c757d") !important;">
             <div class="card-body">
 
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="badge bg-dark text-muted border border-secondary">
                         <i class="far fa-clock me-1"></i> @item.StartTime.ToLocalTime().ToString("HH:mm")
                     </span>
-                    <small class="@statusColor fw-bold" style="font-size: 11px;">
-                        @count / @cap STUDENTS
-                    </small>
+
+                    @if (isMyClass)
+                    {
+                        <small class="text-success fw-bold" style="font-size: 11px;">
+                            @count / @cap STUDENTS
+                        </small>
+                    }
+                    else
+                    {
+                        <small class="text-muted" style="font-size: 11px;">
+                            <i class="fas fa-user-tie me-1"></i> @(item.Coach?.FirstName ?? "Other Coach")
+                        </small>
+                    }
                 </div>
 
                 <h5 class="card-title text-white fw-bold mb-3">@item.Title</h5>
 
                 <div class="progress mb-3" style="height: 6px; background-color: #333;">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: @percent%"></div>
+                    <div class="progress-bar @(isMyClass ? "bg-warning" : "bg-secondary")" role="progressbar" style="width: @percent%"></div>
                 </div>
 
                 <div class="d-flex gap-2 mt-3">
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-light btn-sm flex-grow-1">
-                        <i class="fas fa-users me-2"></i> View Students
-                    </a>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm" title="Edit Class">
-                        <i class="fas fa-edit"></i>
-                    </a>
+                    @if (isMyClass)
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-light btn-sm flex-grow-1">
+                            <i class="fas fa-users me-2"></i> View Students
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm" title="Edit Class">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary btn-sm w-100" disabled style="opacity: 0.5;">
+                            <i class="fas fa-lock me-2"></i> View Only
+                        </button>
+                    }
                 </div>
 
             </div>

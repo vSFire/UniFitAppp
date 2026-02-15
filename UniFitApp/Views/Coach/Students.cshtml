@@ -5,18 +5,20 @@
 }
 
 <div class="d-flex align-items-center mb-4">
-    <h4 class="fw-bold text-white mb-0">All Students</h4>
+    <h4 class="fw-bold text-white mb-0">My Students</h4>
     <span class="badge bg-warning text-dark ms-3">@Model.Count() Total</span>
 </div>
 
 <div class="mb-4">
-    <input type="text" class="form-control" placeholder="Search student by name..." style="background: #1E1E1E; border: none;">
+    <input type="text" class="form-control" placeholder="Search student..." style="background: #1E1E1E; border: 1px solid #333; color: white;">
 </div>
 
 @if (!Model.Any())
 {
     <div class="text-center text-muted mt-5">
-        <p>В системе пока нет студентов.</p>
+        <i class="fas fa-user-slash fa-3x mb-3" style="opacity: 0.3;"></i>
+        <p>У вас пока нет студентов.</p>
+        <small>Студенты появятся здесь, когда запишутся на ваши тренировки.</small>
     </div>
 }
 else
@@ -24,7 +26,7 @@ else
     <div class="d-flex flex-column gap-3">
         @foreach (var student in Model)
         {
-            <div class="d-flex align-items-center p-3 rounded" style="background-color: #1E1E1E;">
+            <div class="d-flex align-items-center p-3 rounded" style="background-color: #1E1E1E; border-left: 4px solid var(--primary-orange);">
                 <div class="me-3">
                     @if (!string.IsNullOrEmpty(student.ProfilePictureUrl))
                     {
@@ -36,7 +38,7 @@ else
                     else
                     {
                         <div style="width: 50px; height: 50px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #444;">
-                            <span class="text-white fw-bold">@student.FirstName.Substring(0, 1)</span>
+                            <span class="text-white fw-bold">@student.FirstName?.Substring(0, 1)</span>
                         </div>
                     }
                 </div>
@@ -47,15 +49,16 @@ else
                 </div>
 
                 <div>
-                    <a asp-action="SendMessage" asp-route-studentId="@student.Id" class="btn btn-outline-info btn-sm rounded-circle me-2" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-envelope"></i>
+                    <a asp-action="SendMessage" asp-route-studentId="@student.Id" class="btn btn-outline-warning btn-sm rounded-circle me-2" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-comment-dots"></i>
                     </a>
 
                     <a href="mailto:@student.Email" class="btn btn-dark btn-sm rounded-circle" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-envelope text-warning"></i>
+                        <i class="fas fa-envelope text-muted"></i>
                     </a>
                 </div>
             </div>
         }
     </div>
 }
+<div style="height: 80px;"></div>

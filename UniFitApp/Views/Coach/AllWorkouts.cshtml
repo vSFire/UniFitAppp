@@ -5,6 +5,9 @@
 @{
     ViewData["Title"] = "Все тренировки";
     var currentUser = await UserManager.GetUserAsync(User);
+
+    // Получаем текущее состояние фильтра из контроллера (по умолчанию true - "Все")
+    var showAll = ViewBag.ShowAll as bool? ?? true;
 }
 
 <div class="d-flex align-items-center mb-4">
@@ -12,15 +15,21 @@
 </div>
 
 <div class="d-flex gap-2 mb-4 overflow-auto">
-    <button class="btn btn-warning btn-sm rounded-pill px-3 fw-bold">All Classes</button>
-    <button class="btn btn-dark btn-sm rounded-pill px-3 border border-secondary text-muted">My Classes</button>
-    <button class="btn btn-dark btn-sm rounded-pill px-3 border border-secondary text-muted">Other Coaches</button>
+    <a asp-action="AllWorkouts" asp-route-showAll="true"
+       class="btn btn-sm rounded-pill px-3 fw-bold @(showAll ? "btn-warning text-dark" : "btn-dark text-muted border border-secondary")">
+        All Classes
+    </a>
+
+    <a asp-action="AllWorkouts" asp-route-showAll="false"
+       class="btn btn-sm rounded-pill px-3 fw-bold @(!showAll ? "btn-warning text-dark" : "btn-dark text-muted border border-secondary")">
+        My Classes
+    </a>
 </div>
 
 @if (!Model.Any())
 {
     <div class="text-center text-muted mt-5">
-        <p>Расписание пусто.</p>
+        <p>Тренировки не найдены.</p>
     </div>
 }
 else
@@ -35,13 +44,12 @@ else
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="small text-muted mb-1">
-                            @item.StartTime.ToString("HH:mm") - @item.StartTime.AddMinutes(60).ToString("HH:mm")
+                            @item.StartTime.ToLocalTime().ToString("dd MMM HH:mm")
                         </div>
 
                         <h5 class="card-title text-white fw-bold mb-1">@item.Title</h5>
 
                         <div class="small @(isMyClass ? "text-warning" : "text-muted") mb-2 d-flex align-items-center">
-
                             @if (!string.IsNullOrEmpty(item.Coach?.ProfilePictureUrl))
                             {
                                 <img src="@item.Coach.ProfilePictureUrl"
@@ -53,7 +61,6 @@ else
                             {
                                 <i class="fas fa-user-circle me-2"></i>
                             }
-
                             <span>@(isMyClass ? "You" : $"Coach {item.Coach?.FirstName}")</span>
                         </div>
                     </div>
@@ -84,5 +91,4 @@ else
         </div>
     }
 }
-
 <div style="height: 80px;"></div>

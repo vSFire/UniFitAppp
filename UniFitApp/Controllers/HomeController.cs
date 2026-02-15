@@ -7,8 +7,6 @@ using UniFitApp.Models;
 
 namespace UniFitApp.Controllers
 {
-    // Разрешаем доступ всем (даже без входа - чтобы видели расписание), 
-    // но записываться смогут только вошедшие.
     [Authorize]
     public class HomeController : Controller
     {
@@ -21,47 +19,35 @@ namespace UniFitApp.Controllers
             _userManager = userManager;
         }
 
-        // Добавили параметр date
+        // 1. РАСПИСАНИЕ
         public async Task<IActionResult> Index(DateTime? date, bool showBookedOnly = false)
         {
             var user = await _userManager.GetUserAsync(User);
-
-            // Дата нужна для подсветки календаря и режима "All Classes"
-            var selectedDate = date.HasValue
-                ? DateTime.SpecifyKind(date.Value, DateTimeKind.Utc)
-                : DateTime.UtcNow.Date;
+            var selectedDate = date.HasValue ? DateTime.SpecifyKind(date.Value, DateTimeKind.Utc) : DateTime.UtcNow.Date;
 
             ViewBag.SelectedDate = selectedDate;
             ViewBag.ShowBookedOnly = showBookedOnly;
 
             List<Workout> workouts;
-
             if (showBookedOnly)
             {
-                // РЕЖИМ BOOKED: Игнорируем дату, грузим ВСЕ записи студента
                 workouts = await _context.Workouts
-                    .Include(w => w.Coach)
-                    .Include(w => w.Enrollments)
-                    .Where(w => w.Enrollments.Any(e => e.StudentId == user.Id)) // Только где я записан
-                    .OrderBy(w => w.StartTime) // Сортируем по времени
-                    .ToListAsync();
+                    .Include(w => w.Coach).Include(w => w.Enrollments)
+                    .Where(w => w.Enrollments.Any(e => e.StudentId == user.Id))
+                    .OrderBy(w => w.StartTime).ToListAsync();
             }
             else
             {
-                // РЕЖИМ ALL CLASSES: Фильтруем по конкретному дню
                 workouts = await _context.Workouts
-                    .Include(w => w.Coach)
-                    .Include(w => w.Enrollments)
+                    .Include(w => w.Coach).Include(w => w.Enrollments)
                     .Where(w => w.StartTime >= selectedDate && w.StartTime < selectedDate.AddDays(1))
-                    .OrderBy(w => w.StartTime)
-                    .ToListAsync();
+                    .OrderBy(w => w.StartTime).ToListAsync();
             }
-
             return View(workouts);
         }
 
-        // Логика ЗАПИСИ (Book)
-        [Authorize(Roles = "Student")] // Только студенты могут жать кнопку
+        // 2. ЗАПИСЬ / ОТМЕНА ЗАПИСИ
+        [Authorize(Roles = "Student")]
         [HttpPost]
         public async Task<IActionResult> Book(int id)
         {
@@ -70,70 +56,64 @@ namespace UniFitApp.Controllers
 
             if (workout == null) return NotFound();
 
-            // Проверка: Места есть?
-            if (workout.Enrollments.Count >= workout.Capacity)
+            var existing = await _context.Enrollments.FirstOrDefaultAsync(e => e.WorkoutId == id && e.StudentId == user.Id);
+
+            if (existing != null)
             {
-                TempData["Error"] = "Извините, мест больше нет!";
-                return RedirectToAction(nameof(Index));
+                // === ОТМЕНА (Уведомление в историю на русском) ===
+                _context.Notifications.Add(new Notification
+                {
+                    UserId = user.Id,
+                    Message = $"Вы отменили запись на тренировку '{workout.Title}' ({workout.StartTime.ToLocalTime():dd.MM}).",
+                    CreatedAt = DateTime.UtcNow
+                });
+
+                _context.Enrollments.Remove(existing);
+                TempData["Info"] = "Вы отменили запись.";
+            }
+            else
+            {
+                // === ЗАПИСЬ (Уведомление в историю на русском) ===
+                if (workout.Enrollments.Count >= workout.Capacity)
+                {
+                    TempData["Error"] = "Извините, мест больше нет!";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                _context.Enrollments.Add(new Enrollment { WorkoutId = id, StudentId = user.Id });
+
+                _context.Notifications.Add(new Notification
+                {
+                    UserId = user.Id,
+                    Message = $"Успешно! Вы записаны на '{workout.Title}' в {workout.StartTime.ToLocalTime():HH:mm}.",
+                    CreatedAt = DateTime.UtcNow
+                });
+
+                TempData["Success"] = "Вы успешно записаны!";
             }
 
-            // Проверка: Уже записан?
-            if (workout.Enrollments.Any(e => e.StudentId == user.Id))
-            {
-                TempData["Info"] = "Вы уже записаны на это занятие.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            // Записываем
-            var enrollment = new Enrollment { WorkoutId = id, StudentId = user.Id };
-            _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Вы успешно записаны!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { date = workout.StartTime.ToString("yyyy-MM-dd") });
         }
-        // СТРАНИЦА: Мои тренировки (Upcoming & Past)
+
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> MyWorkouts()
         {
             var user = await _userManager.GetUserAsync(User);
-
-            // Ищем записи текущего студента
             var myEnrollments = await _context.Enrollments
-                .Include(e => e.Workout)            // Подгружаем инфо о тренировке
-                .ThenInclude(w => w.Coach)          // И кто тренер
+                .Include(e => e.Workout).ThenInclude(w => w.Coach)
                 .Where(e => e.StudentId == user.Id)
-                .OrderBy(e => e.Workout.StartTime)  // Сортируем по времени
-                .ToListAsync();
-
+                .OrderBy(e => e.Workout.StartTime).ToListAsync();
             return View(myEnrollments);
         }
 
-        // ДЕЙСТВИЕ: Отменить запись (Cancel Booking)
         [Authorize(Roles = "Student")]
         [HttpPost]
         public async Task<IActionResult> CancelBooking(int workoutId)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            // Ищем запись
-            var enrollment = await _context.Enrollments
-                .FirstOrDefaultAsync(e => e.WorkoutId == workoutId && e.StudentId == user.Id);
-
-            if (enrollment != null)
-            {
-                _context.Enrollments.Remove(enrollment);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Вы отменили запись на тренировку.";
-            }
-            else
-            {
-                TempData["Error"] = "Запись не найдена.";
-            }
-
-            return RedirectToAction(nameof(MyWorkouts));
+            return await Book(workoutId);
         }
-        // СТРАНИЦА: Цифровой пропуск (QR код)
+
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> Attendance()
         {
