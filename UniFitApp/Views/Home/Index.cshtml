@@ -11,6 +11,54 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="card mb-4 border-0" style="background-color: #1E1E1E; border-radius: 15px;">
+        <div class="card-body p-3">
+            <form method="get" asp-action="Index">
+                <input type="hidden" name="date" value="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="showBookedOnly" value="@(ViewBag.ShowBookedOnly.ToString().ToLower())" />
+
+                <div class="row g-2">
+                    <div class="col-12">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-search"></i></span>
+                            <input type="text" name="searchString" value="@ViewBag.CurrentSearch"
+                                   class="form-control bg-dark text-white border-secondary"
+                                   placeholder="Search workout name...">
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <select name="workoutType" class="form-select bg-dark text-white border-secondary" onchange="this.form.submit()">
+                            <option value="">All Types</option>
+                            <option value="Cardio" selected="@(ViewBag.CurrentType == "Cardio")">Cardio</option>
+                            <option value="Strength" selected="@(ViewBag.CurrentType == "Strength")">Strength</option>
+                            <option value="Yoga" selected="@(ViewBag.CurrentType == "Yoga")">Yoga</option>
+                            <option value="Boxing" selected="@(ViewBag.CurrentType == "Boxing")">Boxing</option>
+                            <option value="CrossFit" selected="@(ViewBag.CurrentType == "CrossFit")">CrossFit</option>
+                        </select>
+                    </div>
+
+                    <div class="col-6">
+                        <select name="timeOfDay" class="form-select bg-dark text-white border-secondary" onchange="this.form.submit()">
+                            <option value="">Any Time</option>
+                            <option value="Morning" selected="@(ViewBag.CurrentTime == "Morning")">Morning (..-12)</option>
+                            <option value="Afternoon" selected="@(ViewBag.CurrentTime == "Afternoon")">Day (12-17)</option>
+                            <option value="Evening" selected="@(ViewBag.CurrentTime == "Evening")">Evening (17-..)</option>
+                        </select>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch) || !string.IsNullOrEmpty(ViewBag.CurrentType) || !string.IsNullOrEmpty(ViewBag.CurrentTime))
+                    {
+                        <div class="col-12">
+                            <a asp-action="Index" asp-route-date="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" class="btn btn-outline-secondary btn-sm w-100">
+                                <i class="fas fa-times me-1"></i> Clear Filters
+                            </a>
+                        </div>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
     <div>
         <h2 class="fw-bold text-white mb-0">Schedule</h2>
         @if (showBookedOnly)

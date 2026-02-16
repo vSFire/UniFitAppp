@@ -20,29 +20,73 @@ namespace UniFitApp.Controllers
         }
 
         // 1. РАСПИСАНИЕ
-        public async Task<IActionResult> Index(DateTime? date, bool showBookedOnly = false)
+        // 1. РАСПИСАНИЕ С ПОИСКОМ И ФИЛЬТРАМИ
+        public async Task<IActionResult> Index(
+            DateTime? date,
+            bool showBookedOnly = false,
+            string searchString = null,
+            string workoutType = null,
+            string timeOfDay = null)
         {
             var user = await _userManager.GetUserAsync(User);
             var selectedDate = date.HasValue ? DateTime.SpecifyKind(date.Value, DateTimeKind.Utc) : DateTime.UtcNow.Date;
 
+            // Сохраняем параметры для View, чтобы фильтры не сбрасывались
             ViewBag.SelectedDate = selectedDate;
             ViewBag.ShowBookedOnly = showBookedOnly;
+            ViewBag.CurrentSearch = searchString;
+            ViewBag.CurrentType = workoutType;
+            ViewBag.CurrentTime = timeOfDay;
 
-            List<Workout> workouts;
+            // Начальный запрос
+            var query = _context.Workouts
+                .Include(w => w.Coach)
+                .Include(w => w.Enrollments)
+                .AsQueryable();
+
+            // 1. Фильтр: Только забронированные (если включено)
             if (showBookedOnly)
             {
-                workouts = await _context.Workouts
-                    .Include(w => w.Coach).Include(w => w.Enrollments)
-                    .Where(w => w.Enrollments.Any(e => e.StudentId == user.Id))
-                    .OrderBy(w => w.StartTime).ToListAsync();
+                query = query.Where(w => w.Enrollments.Any(e => e.StudentId == user.Id));
             }
             else
             {
-                workouts = await _context.Workouts
-                    .Include(w => w.Coach).Include(w => w.Enrollments)
-                    .Where(w => w.StartTime >= selectedDate && w.StartTime < selectedDate.AddDays(1))
-                    .OrderBy(w => w.StartTime).ToListAsync();
+                // Иначе фильтруем по дате (только на выбранный день)
+                query = query.Where(w => w.StartTime >= selectedDate && w.StartTime < selectedDate.AddDays(1));
             }
+
+            // 2. Поиск по названию (Search)
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(w => w.Title.ToLower().Contains(searchString.ToLower()));
+            }
+
+            // 3. Фильтр по Типу (Cardio, Strength...)
+            if (!string.IsNullOrEmpty(workoutType) && workoutType != "All")
+            {
+                query = query.Where(w => w.Type == workoutType);
+            }
+
+            // 4. Фильтр по Времени суток
+            if (!string.IsNullOrEmpty(timeOfDay) && timeOfDay != "All")
+            {
+                // Для корректного сравнения времени в БД (Postgres) лучше вытянуть данные
+                // Но для оптимизации попробуем через Hour
+                if (timeOfDay == "Morning") // до 12:00
+                {
+                    query = query.Where(w => w.StartTime.Hour < 12);
+                }
+                else if (timeOfDay == "Afternoon") // 12:00 - 17:00
+                {
+                    query = query.Where(w => w.StartTime.Hour >= 12 && w.StartTime.Hour < 17);
+                }
+                else if (timeOfDay == "Evening") // после 17:00
+                {
+                    query = query.Where(w => w.StartTime.Hour >= 17);
+                }
+            }
+
+            var workouts = await query.OrderBy(w => w.StartTime).ToListAsync();
             return View(workouts);
         }
 

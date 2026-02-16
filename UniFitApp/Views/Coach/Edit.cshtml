@@ -23,7 +23,17 @@
                     <label class="text-muted small">Class Name</label>
                     <input asp-for="Title" class="form-control" />
                 </div>
-
+                <div class="mb-3">
+                    <label class="text-muted small">Workout Type</label>
+                    <select asp-for="Type" class="form-select bg-dark text-white border-secondary">
+                        <option value="General">General (Общая)</option>
+                        <option value="Cardio">Cardio (Кардио)</option>
+                        <option value="Strength">Strength (Силовая)</option>
+                        <option value="Yoga">Yoga/Pilates (Йога)</option>
+                        <option value="Boxing">Boxing (Бокс)</option>
+                        <option value="CrossFit">CrossFit</option>
+                    </select>
+                </div>
                 <div class="mb-3">
                     <label class="text-muted small">Date & Time</label>
                     <input asp-for="StartTime" class="form-control" type="datetime-local" />

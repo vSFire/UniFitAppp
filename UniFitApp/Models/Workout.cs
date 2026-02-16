@@ -14,6 +14,11 @@ namespace UniFitApp.Models
 
         public string Description { get; set; }
 
+        // === НОВОЕ ПОЛЕ: ТИП ТРЕНИРОВКИ ===
+        [Required]
+        public string Type { get; set; } = "General"; // Значение по умолчанию
+        // ==================================
+
         [Required(ErrorMessage = "Дата обязательна")]
         public DateTime StartTime { get; set; }
 
@@ -25,12 +30,10 @@ namespace UniFitApp.Models
 
         public string? VideoUrl { get; set; }
 
-        // Связь с тренером
         public string CoachId { get; set; }
         [ForeignKey("CoachId")]
         public AppUser Coach { get; set; }
 
-        // Список записавшихся студентов
         public List<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }
