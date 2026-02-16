@@ -1,0 +1,117 @@
+﻿@model UniFitApp.Models.Workout
+
+@{
+    ViewData["Title"] = "Details";
+    string currentUserId = ViewBag.CurrentUserId as string;
+    bool isBooked = Model.Enrollments.Any(e => e.StudentId == currentUserId);
+    int spotsLeft = Model.Capacity - Model.Enrollments.Count;
+
+    // Извлекаем ID видео из ссылки YouTube (простая логика)
+    string videoId = "";
+    if (!string.IsNullOrEmpty(Model.VideoUrl))
+    {
+        // Поддерживает форматы: youtu.be/ID или youtube.com/watch?v=ID
+        if (Model.VideoUrl.Contains("youtu.be/"))
+        {
+            videoId = Model.VideoUrl.Split("youtu.be/")[1].Split("?")[0];
+        }
+        else if (Model.VideoUrl.Contains("v="))
+        {
+            videoId = Model.VideoUrl.Split("v=")[1].Split("&")[0];
+        }
+    }
+}
+
+<div class="container pb-5">
+
+    <div class="d-flex align-items-center mb-4">
+        <a asp-action="Index" class="text-decoration-none text-muted me-3">
+            <i class="fas fa-arrow-left fa-lg"></i>
+        </a>
+        <h4 class="fw-bold text-white mb-0">Class Details</h4>
+    </div>
+
+    @if (!string.IsNullOrEmpty(videoId))
+    {
+        <div class="ratio ratio-16x9 mb-4 rounded overflow-hidden shadow-lg border border-secondary">
+            <iframe src="https://www.youtube.com/embed/@videoId?rel=0"
+                    title="YouTube video"
+                    allowfullscreen></iframe>
+        </div>
+    }
+    else
+    {
+        <div class="mb-4 rounded d-flex align-items-center justify-content-center text-muted border border-secondary"
+             style="height: 200px; background-color: #1E1E1E;">
+            <div class="text-center">
+                <i class="fas fa-video-slash fa-2x mb-2"></i>
+                <p class="small mb-0">No preview video available</p>
+            </div>
+        </div>
+    }
+
+    <div class="card border-0 mb-4" style="background-color: #1E1E1E; border-radius: 15px;">
+        <div class="card-body p-4">
+
+            <h2 class="fw-bold text-white mb-1">@Model.Title</h2>
+
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge bg-warning text-dark me-2">@Model.StartTime.ToString("HH:mm")</span>
+                <span class="text-muted small"><i class="fas fa-calendar-alt me-1"></i> @Model.StartTime.ToString("dd MMMM, yyyy")</span>
+            </div>
+
+            <hr class="border-secondary opacity-50">
+
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <small class="text-muted d-block">Coach</small>
+                    <span class="text-white fw-bold"><i class="fas fa-user me-1 text-warning"></i> @(Model.Coach?.FirstName ?? "Unknown")</span>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted d-block">Location</small>
+                    <span class="text-white fw-bold"><i class="fas fa-map-pin me-1 text-warning"></i> @Model.Location</span>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted d-block">Spots Left</small>
+                    <span class="@(spotsLeft > 0 ? "text-success" : "text-danger") fw-bold">@spotsLeft / @Model.Capacity</span>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted d-block">Duration</small>
+                    <span class="text-white">60 min</span>
+                </div>
+            </div>
+
+            <h5 class="fw-bold text-white mb-2">About this class</h5>
+            <p class="text-muted" style="line-height: 1.6;">
+                @(string.IsNullOrEmpty(Model.Description) ? "No description provided by the coach." : Model.Description)
+            </p>
+
+        </div>
+    </div>
+
+    <div class="fixed-bottom p-3" style="background: linear-gradient(to top, #000 80%, transparent); pointer-events: none;">
+        <div class="container" style="pointer-events: auto;">
+            <form asp-action="Book" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
+                @if (isBooked)
+                {
+                    <button type="submit" class="btn btn-danger w-100 py-3 fw-bold rounded-pill shadow-lg">
+                        <i class="fas fa-times me-2"></i> Cancel Booking
+                    </button>
+                }
+                else if (spotsLeft <= 0)
+                {
+                    <button class="btn btn-secondary w-100 py-3 fw-bold rounded-pill" disabled>
+                        Class Full
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-lg">
+                        <i class="fas fa-check me-2"></i> Book Now
+                    </button>
+                }
+            </form>
+        </div>
+    </div>
+    <div style="height: 60px;"></div>
+</div>

@@ -44,9 +44,8 @@ namespace UniFitApp.Controllers
                     await _userManager.AddToRoleAsync(user, userRole);
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    // === ИЗМЕНЕНО: ВСЕХ ОТПРАВЛЯЕМ НА WELCOME PAGE ===
+                    // ПЕРЕНАПРАВЛЕНИЕ НА WELCOME
                     return RedirectToAction("Index", "Welcome");
-                    // =================================================
                 }
 
                 foreach (var error in result.Errors)
@@ -61,7 +60,6 @@ namespace UniFitApp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Если пользователь уже вошел в систему - сразу кидаем на Welcome
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Welcome");
@@ -78,9 +76,7 @@ namespace UniFitApp.Controllers
 
                 if (result.Succeeded)
                 {
-                    // === ИЗМЕНЕНО: ПОСЛЕ ВХОДА - НА WELCOME PAGE ===
                     return RedirectToAction("Index", "Welcome");
-                    // ===============================================
                 }
 
                 ModelState.AddModelError(string.Empty, "Неверный логин или пароль");
@@ -109,6 +105,7 @@ namespace UniFitApp.Controllers
             return View();
         }
 
+        // СТРАНИЦА: Настройки профиля
         [HttpGet]
         public async Task<IActionResult> Settings()
         {
@@ -116,15 +113,22 @@ namespace UniFitApp.Controllers
             return View(user);
         }
 
+        // ДЕЙСТВИЕ: Сохранить настройки (ОБНОВЛЕНО: BIO + SPEC)
         [HttpPost]
         public async Task<IActionResult> Settings(AppUser model, IFormFile? avatarFile)
         {
             var user = await _userManager.GetUserAsync(User);
 
+            // Базовые поля
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.PhoneNumber = model.PhoneNumber;
 
+            // Новые поля для тренера
+            user.Bio = model.Bio;
+            user.Specialization = model.Specialization;
+
+            // Если загрузили новое фото
             if (avatarFile != null)
             {
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);

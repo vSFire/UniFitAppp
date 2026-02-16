@@ -1,6 +1,10 @@
-﻿@model UniFitApp.Models.AppUser
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@model UniFitApp.Models.AppUser
+
 @{
     ViewData["Title"] = "Настройки";
+    bool isCoach = await UserManager.IsInRoleAsync(Model, "Coach");
 }
 
 <div class="d-flex align-items-center mb-4">
@@ -43,6 +47,19 @@
             <label class="text-muted small">Last Name</label>
             <input asp-for="LastName" class="form-control" />
         </div>
+
+        @if (isCoach)
+        {
+            <div class="mb-3">
+                <label class="text-muted small">Specialization</label>
+                <input asp-for="Specialization" class="form-control" placeholder="e.g. Yoga, Boxing, CrossFit" />
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted small">Bio (About Me)</label>
+                <textarea asp-for="Bio" class="form-control" rows="3" placeholder="Tell students about your experience..."></textarea>
+            </div>
+        }
 
         <div class="mb-3">
             <label class="text-muted small">Phone Number</label>

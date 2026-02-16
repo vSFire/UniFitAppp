@@ -2,13 +2,15 @@
 
 namespace UniFitApp.Models
 {
-    // Наследуемся от IdentityUser - это дает нам поля Email, PasswordHash, PhoneNumber и т.д. автоматом
     public class AppUser : IdentityUser
     {
-        // Добавляем свои поля, которых нет в стандарте, но могут пригодиться по ТЗЗ
-        public string FirstName { get; set; } // Имя
-        public string LastName { get; set; }  // Фамилия
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? ProfilePictureUrl { get; set; }
+
+        // === НОВЫЕ ПОЛЯ ДЛЯ ПРОФИЛЯ ТРЕНЕРА ===
+        public string? Bio { get; set; } // О себе
+        public string? Specialization { get; set; } // Йога, Бокс и т.д.
     }
 }

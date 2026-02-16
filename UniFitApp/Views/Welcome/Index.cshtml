@@ -37,17 +37,14 @@
 
         <div id="gymCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner" style="height: 600px;">
-
                 <div class="carousel-item active h-100">
-                    <div class="w-100 h-100" style="background: url('/images/welcome/1.png') center/cover no-repeat;"></div>
+                    <div class="w-100 h-100" style="background: url('/images/welcome/1.jpg') center/cover no-repeat;"></div>
                 </div>
-
                 <div class="carousel-item h-100">
-                    <div class="w-100 h-100" style="background: url('/images/welcome/2.png') center/cover no-repeat;"></div>
+                    <div class="w-100 h-100" style="background: url('/images/welcome/2.jpg') center/cover no-repeat;"></div>
                 </div>
-
                 <div class="carousel-item h-100">
-                    <div class="w-100 h-100" style="background: url('/images/welcome/3.png') center/cover no-repeat;"></div>
+                    <div class="w-100 h-100" style="background: url('/images/welcome/3.jpg') center/cover no-repeat;"></div>
                 </div>
             </div>
         </div>
@@ -55,49 +52,33 @@
 
     <div class="container">
         <div class="row g-4">
-
             <div class="col-md-4">
                 <div class="card h-100 border-0 shadow-sm" style="background-color: #1E1E1E; border-radius: 15px;">
                     <div class="card-body text-center p-4">
-                        <div class="mb-3">
-                            <i class="fas fa-map-marker-alt fa-3x text-secondary"></i>
-                        </div>
+                        <div class="mb-3"><i class="fas fa-map-marker-alt fa-3x text-secondary"></i></div>
                         <h5 class="text-white fw-bold">Где нас найти</h5>
-                        <p class="text-muted small">Университетский кампус, Корпус Б, 1 этаж.</p>
-                        <hr class="bg-secondary opacity-25">
-                        <p class="text-warning mb-0"><i class="far fa-clock me-1"></i> 07:00 - 23:00</p>
+                        <p class="text-muted small">Университетский кампус, Корпус Б.</p>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card h-100 border-0 shadow-sm" style="background-color: #1E1E1E; border-radius: 15px;">
                     <div class="card-body text-center p-4">
-                        <div class="mb-3">
-                            <i class="fas fa-dumbbell fa-3x text-secondary"></i>
-                        </div>
+                        <div class="mb-3"><i class="fas fa-dumbbell fa-3x text-secondary"></i></div>
                         <h5 class="text-white fw-bold">Наши Тренеры</h5>
-                        <p class="text-muted small">Профессионалы, которые помогут тебе достичь результата.</p>
-                        <a asp-controller="@(isCoach ? "Coach" : "Home")" asp-action="@(isCoach ? "AllWorkouts" : "Index")" class="btn btn-outline-warning btn-sm mt-2 rounded-pill">
-                            Посмотреть тренировки
-                        </a>
+                        <p class="text-muted small">Профессионалы своего дела.</p>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card h-100 border-0 shadow-sm" style="background-color: #1E1E1E; border-radius: 15px;">
                     <div class="card-body text-center p-4">
-                        <div class="mb-3">
-                            <i class="fas fa-bullhorn fa-3x text-secondary"></i>
-                        </div>
+                        <div class="mb-3"><i class="fas fa-bullhorn fa-3x text-secondary"></i></div>
                         <h5 class="text-white fw-bold">Новости</h5>
-                        <p class="text-muted small">Новое оборудование в зоне кардио уже доступно!</p>
-                        <span class="badge bg-danger">NEW</span>
+                        <p class="text-muted small">Новое оборудование уже доступно!</p>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

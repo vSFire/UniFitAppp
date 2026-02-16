@@ -36,10 +36,7 @@
     {
         var day = today.AddDays(i);
         var isActive = day.Date == selectedDate.Date;
-
-        <a asp-action="Index"
-           asp-route-date="@day.ToString("yyyy-MM-dd")"
-           asp-route-showBookedOnly="false"
+        <a asp-action="Index" asp-route-date="@day.ToString("yyyy-MM-dd")" asp-route-showBookedOnly="false"
            class="text-decoration-none text-center rounded p-2 mx-1 flex-fill @(isActive ? "bg-warning text-dark" : "bg-dark text-muted")"
            style="min-width: 60px; border: 1px solid #333;">
             <div class="small fw-bold">@day.ToString("ddd")</div>
@@ -50,13 +47,9 @@
 
 <div class="d-flex mb-4 bg-dark rounded p-1 border border-secondary" style="max-width: 300px;">
     <a asp-action="Index" asp-route-date="@selectedDate.ToString("yyyy-MM-dd")" asp-route-showBookedOnly="false"
-       class="flex-fill btn btn-sm rounded fw-bold @(!showBookedOnly ? "bg-warning text-dark" : "text-muted")">
-        All Classes
-    </a>
+       class="flex-fill btn btn-sm rounded fw-bold @(!showBookedOnly ? "bg-warning text-dark" : "text-muted")">All Classes</a>
     <a asp-action="Index" asp-route-showBookedOnly="true"
-       class="flex-fill btn btn-sm rounded fw-bold @(showBookedOnly ? "bg-warning text-dark" : "text-muted")">
-        Booked
-    </a>
+       class="flex-fill btn btn-sm rounded fw-bold @(showBookedOnly ? "bg-warning text-dark" : "text-muted")">Booked</a>
 </div>
 
 @if (!Model.Any())
@@ -86,12 +79,14 @@ else
                             }
                         </div>
                         <h5 class="card-title text-white fw-bold mb-1">@item.Title</h5>
+
                         <div class="small text-muted mb-2">
-                            <i class="fas fa-user-circle me-1"></i> Coach @(item.Coach?.FirstName ?? "Unknown")
+                            <a asp-controller="Home" asp-action="CoachProfile" asp-route-coachId="@item.CoachId" class="text-decoration-none text-muted">
+                                <i class="fas fa-user-circle me-1"></i> Coach @(item.Coach?.FirstName ?? "Unknown")
+                            </a>
                         </div>
-                        <div class="small text-muted">
-                            <i class="fas fa-map-marker-alt me-1"></i> @item.Location
-                        </div>
+
+                        <div class="small text-muted"><i class="fas fa-map-marker-alt me-1"></i> @item.Location</div>
                     </div>
 
                     <div class="d-flex flex-column align-items-end">
@@ -100,20 +95,24 @@ else
                             <span class="badge bg-dark border border-warning text-warning mb-3">@(isFull ? "FULL" : $"{spotsLeft} SPOTS")</span>
                         }
 
-                        @if (isBooked)
-                        {
-                            <button class="btn btn-success btn-sm px-4 fw-bold" disabled>Booked <i class="fas fa-check"></i></button>
-                        }
-                        else if (isFull)
-                        {
-                            <button class="btn btn-secondary btn-sm px-4 fw-bold" disabled>Waitlist</button>
-                        }
-                        else
-                        {
-                            <form asp-action="Book" asp-route-id="@item.Id" method="post">
-                                <button type="submit" class="btn btn-primary btn-sm px-4 fw-bold text-white">Book</button>
-                            </form>
-                        }
+                        <div class="d-flex gap-2 mt-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark btn-sm border-secondary text-white px-3">Info</a>
+                            @if (isBooked)
+                            {
+                                <button class="btn btn-success btn-sm px-3 fw-bold" disabled><i class="fas fa-check"></i></button>
+                            }
+                            else if (isFull)
+                            {
+
+                                <button class="btn btn-secondary btn-sm px-3 fw-bold" disabled>Full</button>
+                            }
+                            else
+                            {
+                                <form asp-action="Book" asp-route-id="@item.Id" method="post">
+                                    <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold text-white">Book</button>
+                                </form>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

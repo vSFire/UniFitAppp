@@ -46,10 +46,43 @@ namespace UniFitApp.Controllers
             return View(workouts);
         }
 
+        // === МЕТОД: ДЕТАЛИ ТРЕНИРОВКИ (ВИДЕО) ===
+        public async Task<IActionResult> Details(int id)
+        {
+            var workout = await _context.Workouts
+                .Include(w => w.Coach)
+                .Include(w => w.Enrollments)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (workout == null) return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.CurrentUserId = user.Id;
+
+            return View(workout);
+        }
+
+        // === МЕТОД: ПУБЛИЧНЫЙ ПРОФИЛЬ ТРЕНЕРА ===
+        public async Task<IActionResult> CoachProfile(string coachId)
+        {
+            var coach = await _userManager.FindByIdAsync(coachId);
+            if (coach == null) return NotFound();
+
+            // Загружаем будущие тренировки ЭТОГО тренера
+            var upcomingWorkouts = await _context.Workouts
+                .Where(w => w.CoachId == coachId && w.StartTime > DateTime.UtcNow)
+                .OrderBy(w => w.StartTime)
+                .ToListAsync();
+
+            ViewBag.Workouts = upcomingWorkouts;
+
+            return View(coach);
+        }
+
         // 2. ЗАПИСЬ / ОТМЕНА ЗАПИСИ
         [Authorize(Roles = "Student")]
         [HttpPost]
-        public async Task<IActionResult> Book(int id)
+        public async Task<IActionResult> Book(int id, string? returnUrl = null)
         {
             var user = await _userManager.GetUserAsync(User);
             var workout = await _context.Workouts.Include(w => w.Enrollments).FirstOrDefaultAsync(w => w.Id == id);
@@ -60,7 +93,7 @@ namespace UniFitApp.Controllers
 
             if (existing != null)
             {
-                // === ОТМЕНА (Уведомление в историю на русском) ===
+                // ОТМЕНА
                 _context.Notifications.Add(new Notification
                 {
                     UserId = user.Id,
@@ -73,7 +106,7 @@ namespace UniFitApp.Controllers
             }
             else
             {
-                // === ЗАПИСЬ (Уведомление в историю на русском) ===
+                // ЗАПИСЬ
                 if (workout.Enrollments.Count >= workout.Capacity)
                 {
                     TempData["Error"] = "Извините, мест больше нет!";
@@ -93,6 +126,13 @@ namespace UniFitApp.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            // Если пришли со страницы деталей - вернем туда же
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
             return RedirectToAction(nameof(Index), new { date = workout.StartTime.ToString("yyyy-MM-dd") });
         }
 

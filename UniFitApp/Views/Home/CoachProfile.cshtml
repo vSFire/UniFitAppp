@@ -1,0 +1,83 @@
+﻿@model UniFitApp.Models.AppUser
+
+@{
+    ViewData["Title"] = $"Coach {Model.FirstName}";
+    var workouts = ViewBag.Workouts as List<UniFitApp.Models.Workout> ?? new List<UniFitApp.Models.Workout>();
+}
+
+<div class="container">
+
+    <div class="mb-4">
+        <a href="javascript:history.back()" class="text-decoration-none text-muted">
+            <i class="fas fa-arrow-left me-2"></i> Back
+        </a>
+    </div>
+
+    <div class="text-center mb-5">
+        <div class="position-relative d-inline-block mb-3">
+            @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+            {
+                <img src="@Model.ProfilePictureUrl" class="rounded-circle border border-warning shadow"
+                     style="width: 120px; height: 120px; object-fit: cover; border-width: 3px !important;">
+            }
+            else
+            {
+                <div style="width: 120px; height: 120px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 3px solid var(--primary-orange);">
+                    <span class="display-4 text-white">@Model.FirstName.Substring(0, 1)</span>
+                </div>
+            }
+        </div>
+
+        <h2 class="fw-bold text-white mb-1">@Model.FirstName @Model.LastName</h2>
+
+        @if (!string.IsNullOrEmpty(Model.Specialization))
+        {
+            <span class="badge bg-dark border border-secondary text-warning mb-3">@Model.Specialization</span>
+        }
+        else
+        {
+            <span class="badge bg-dark text-muted mb-3">Coach</span>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Bio))
+        {
+            <p class="text-muted mx-auto" style="max-width: 500px;">@Model.Bio</p>
+        }
+    </div>
+
+    <h5 class="fw-bold text-white mb-3 border-bottom border-secondary pb-2">Upcoming Classes</h5>
+
+    @if (workouts.Any())
+    {
+        <div class="row">
+            @foreach (var item in workouts)
+            {
+                <div class="col-md-6 mb-3">
+                    <div class="card border-0 h-100" style="background-color: #1E1E1E; border-radius: 15px; border-left: 4px solid var(--primary-orange) !important;">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-white fw-bold mb-1">@item.Title</h6>
+                                <small class="text-muted d-block">
+                                    <i class="far fa-calendar me-1"></i> @item.StartTime.ToLocalTime().ToString("dd MMM, HH:mm")
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i> @item.Location
+                                </small>
+                            </div>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm rounded-pill px-3">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center text-muted py-4">
+            <p>No upcoming classes scheduled.</p>
+        </div>
+    }
+</div>
+<div style="height: 60px;"></div>
