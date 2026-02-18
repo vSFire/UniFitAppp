@@ -48,9 +48,17 @@ app.MapControllerRoute(
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
 // —оздание ролей при старте
+// —оздание ролей при старте
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var services = scope.ServiceProvider;
+    // ¬от эта строка важна Ч она "достает" контекст базы данных
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
+    // “еперь эта команда сработает и создаст все таблицы!
+    context.Database.Migrate();
+
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     string[] roleNames = { "Student", "Coach" };
 
     foreach (var roleName in roleNames)
