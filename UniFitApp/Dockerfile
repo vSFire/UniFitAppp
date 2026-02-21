@@ -7,7 +7,6 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
 # Этот этап используется для сборки проекта службы
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -23,8 +22,15 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./UniFitApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
+# Этот этап используется в рабочей среде или при запуске из VS в обычном режиме
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# === ДОБАВЛЕНО: Даем права нашему приложению на сохранение файлов ===
+USER root
+RUN mkdir -p /app/wwwroot/avatars && chown -R $APP_UID:$APP_UID /app/wwwroot
+USER $APP_UID
+# ======================================================================
+
 ENTRYPOINT ["dotnet", "UniFitApp.dll"]
