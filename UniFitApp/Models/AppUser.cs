@@ -10,7 +10,7 @@ namespace UniFitApp.Models
         public string? ProfilePictureUrl { get; set; }
 
         // === НОВЫЕ ПОЛЯ ДЛЯ ПРОФИЛЯ ТРЕНЕРА ===
-        public string? Bio { get; set; } // О себе
+        public string? Bio { get; set; } // О себев
         public string? Specialization { get; set; } // Йога, Бокс и т.д.
     }
 }
