@@ -24,14 +24,11 @@
             {
                 var currentUser = await UserManager.GetUserAsync(User);
 
-                // --- БЕЗОПАСНАЯ ЛОГИКА АВАТАРКИ ---
-                // Получаем первую букву или "U", если имя пустое
                 var userInitial = "U";
                 if (currentUser != null && !string.IsNullOrEmpty(currentUser.FirstName))
                 {
                     userInitial = currentUser.FirstName.Substring(0, 1).ToUpper();
                 }
-                // ----------------------------------
 
                 <a asp-controller="Account" asp-action="Profile" class="text-decoration-none">
                     @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfilePictureUrl))
@@ -68,77 +65,88 @@
     {
         string c = ViewContext.RouteData.Values["Controller"]?.ToString();
         string a = ViewContext.RouteData.Values["Action"]?.ToString();
+
         bool isCoach = User.IsInRole("Coach");
+        bool isAdmin = User.IsInRole("Admin");
 
         <nav class="bottom-nav">
 
-            @if (isCoach)
+            @if (isAdmin)
             {
-                <a asp-controller="Coach" asp-action="Index"
-                   class="nav-item @(c == "Coach" && a == "Index" ? "active" : "")">
-                    <i class="fas fa-th-large"></i>
-                    <span>Dashboard</span>
-                </a>
-            }
-            else
-            {
-                <a asp-controller="Home" asp-action="Index"
-                   class="nav-item @(c == "Home" && a == "Index" ? "active" : "")">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Schedule</span>
-                </a>
-            }
-
-            @if (isCoach)
-            {
-                <a asp-controller="Coach" asp-action="Students"
-                   class="nav-item @(c == "Coach" && a == "Students" ? "active" : "")">
+                <a asp-controller="Admin" asp-action="Users" class="nav-item @(c == "Admin" && a == "Users" ? "active" : "")">
                     <i class="fas fa-users"></i>
-                    <span>Students</span>
+                    <span>Users</span>
+                </a>
+                <a asp-controller="Admin" asp-action="Workouts" class="nav-item @(c == "Admin" && a == "Workouts" ? "active" : "")">
+                    <i class="fas fa-list"></i>
+                    <span>All Workouts</span>
+                </a>
+                <a asp-controller="Account" asp-action="Profile" class="nav-item @(c == "Account" && a == "Profile" ? "active" : "")">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Profile</span>
                 </a>
             }
             else
             {
-                <a asp-controller="Home" asp-action="Attendance"
-                   class="nav-item @(c == "Home" && a == "Attendance" ? "active" : "")">
-                    <i class="fas fa-qrcode"></i>
-                    <span>Access</span>
-                </a>
-            }
-
-            @if (isCoach)
-            {
-                <div class="nav-item-center">
-                    <a asp-controller="Coach" asp-action="Create" class="text-decoration-none">
-                        <div class="plus-btn">
-                            <i class="fas fa-plus"></i>
-                        </div>
+                @if (isCoach)
+                {
+                    <a asp-controller="Coach" asp-action="Index" class="nav-item @(c == "Coach" && a == "Index" ? "active" : "")">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
                     </a>
-                </div>
-            }
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Index" class="nav-item @(c == "Home" && a == "Index" ? "active" : "")">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Schedule</span>
+                    </a>
+                }
 
-            @if (isCoach)
-            {
-                <a asp-controller="Coach" asp-action="AllWorkouts"
-                   class="nav-item @(c == "Coach" && a == "AllWorkouts" ? "active" : "")">
-                    <i class="fas fa-dumbbell"></i>
-                    <span>Gym Workouts</span>
+                @if (isCoach)
+                {
+                    <a asp-controller="Coach" asp-action="Students" class="nav-item @(c == "Coach" && a == "Students" ? "active" : "")">
+                        <i class="fas fa-users"></i>
+                        <span>Students</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Attendance" class="nav-item @(c == "Home" && a == "Attendance" ? "active" : "")">
+                        <i class="fas fa-qrcode"></i>
+                        <span>Access</span>
+                    </a>
+                }
+
+                @if (isCoach)
+                {
+                    <div class="nav-item-center">
+                        <a asp-controller="Coach" asp-action="Create" class="text-decoration-none">
+                            <div class="plus-btn"><i class="fas fa-plus"></i></div>
+                        </a>
+                    </div>
+                }
+
+                @if (isCoach)
+                {
+                    <a asp-controller="Coach" asp-action="AllWorkouts" class="nav-item @(c == "Coach" && a == "AllWorkouts" ? "active" : "")">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Gym Workouts</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="MyWorkouts" class="nav-item @(c == "Home" && a == "MyWorkouts" ? "active" : "")">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>My Workouts</span>
+                    </a>
+                }
+
+                <a asp-controller="Account" asp-action="Profile" class="nav-item @(c == "Account" && a == "Profile" ? "active" : "")">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
                 </a>
             }
-            else
-            {
-                <a asp-controller="Home" asp-action="MyWorkouts"
-                   class="nav-item @(c == "Home" && a == "MyWorkouts" ? "active" : "")">
-                    <i class="fas fa-dumbbell"></i>
-                    <span>My Workouts</span>
-                </a>
-            }
-
-            <a asp-controller="Account" asp-action="Profile"
-               class="nav-item @(c == "Account" && a == "Profile" ? "active" : "")">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
         </nav>
     }
 

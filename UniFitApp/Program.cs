@@ -47,25 +47,44 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-// Создание ролей при старте
-// Создание ролей при старте
+// Создание ролей и АДМИНА при старте
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    // Вот эта строка важна — она "достает" контекст базы данных
     var context = services.GetRequiredService<ApplicationDbContext>();
 
-    // Теперь эта команда сработает и создаст все таблицы!
+    // Применяем миграции
     context.Database.Migrate();
 
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roleNames = { "Student", "Coach" };
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
+    // === ДОБАВИЛИ РОЛЬ ADMIN ===
+    string[] roleNames = { "Student", "Coach", "Admin" };
 
     foreach (var roleName in roleNames)
     {
         if (!await roleManager.RoleExistsAsync(roleName))
         {
             await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+
+    // === СОЗДАЕМ СУПЕР-АДМИНА ===
+    if (await userManager.FindByEmailAsync("admin@unifit.com") == null)
+    {
+        var admin = new AppUser
+        {
+            UserName = "admin@unifit.com",
+            Email = "admin@unifit.com",
+            FirstName = "Super",
+            LastName = "Admin"
+        };
+        // Пароль: admin
+        var createPowerUser = await userManager.CreateAsync(admin, "admin");
+        if (createPowerUser.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "Admin");
         }
     }
 }

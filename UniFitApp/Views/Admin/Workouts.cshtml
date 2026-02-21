@@ -1,0 +1,48 @@
+﻿@model IEnumerable<UniFitApp.Models.Workout>
+
+@{
+    ViewData["Title"] = "Все тренировки";
+}
+
+<div class="d-flex align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-white"><i class="fas fa-list text-warning me-2"></i> All System Workouts</h3>
+</div>
+
+<div class="card border-0" style="background-color: #1E1E1E; border-radius: 15px;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0" style="border-radius: 15px; overflow: hidden;">
+                <thead class="text-muted" style="background-color: #2b2b2b;">
+                    <tr>
+                        <th class="p-3 fw-normal">Date & Time</th>
+                        <th class="p-3 fw-normal">Title & Type</th>
+                        <th class="p-3 fw-normal">Coach</th>
+                        <th class="p-3 fw-normal">Location</th>
+                        <th class="p-3 fw-normal text-center">Enrollment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var w in Model)
+                    {
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td class="p-3 text-white">
+                                <span class="d-block fw-bold">@w.StartTime.ToLocalTime().ToString("dd MMM yyyy")</span>
+                                <small class="text-muted">@w.StartTime.ToLocalTime().ToString("HH:mm")</small>
+                            </td>
+                            <td class="p-3">
+                                <span class="text-white fw-bold d-block">@w.Title</span>
+                                <span class="badge bg-secondary">@w.Type</span>
+                            </td>
+                            <td class="p-3 text-warning">@(w.Coach?.FirstName ?? "Deleted")</td>
+                            <td class="p-3 text-muted">@w.Location</td>
+                            <td class="p-3 text-center fw-bold @(w.Enrollments.Count >= w.Capacity ? "text-danger" : "text-success")">
+                                @w.Enrollments.Count / @w.Capacity
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div style="height: 80px;"></div>

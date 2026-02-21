@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@model IEnumerable<UniFitApp.Models.AppUser>
+
+@{
+    ViewData["Title"] = "Все пользователи";
+}
+
+<div class="d-flex align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-white"><i class="fas fa-users text-warning me-2"></i> Users Management</h3>
+</div>
+
+<div class="card border-0" style="background-color: #1E1E1E; border-radius: 15px;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0" style="border-radius: 15px; overflow: hidden;">
+                <thead class="text-muted" style="background-color: #2b2b2b;">
+                    <tr>
+                        <th class="p-3 fw-normal">Name</th>
+                        <th class="p-3 fw-normal">Email</th>
+                        <th class="p-3 fw-normal">Role</th>
+                        <th class="p-3 fw-normal">Registered</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        var roles = await UserManager.GetRolesAsync(user);
+                        string userRole = roles.FirstOrDefault() ?? "No Role";
+
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td class="p-3 text-white fw-bold">
+                                @if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+                                {
+                                    <img src="@user.ProfilePictureUrl" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit:cover;">
+                                }
+                                @user.FirstName @user.LastName
+                            </td>
+                            <td class="p-3 text-muted">@user.Email</td>
+                            <td class="p-3">
+                                @if (userRole == "Admin")
+                                {
+                                    <span class="badge bg-danger">@userRole</span>
+                                }
+                                else if (userRole == "Coach")
+                                {
+
+                                    <span class="badge bg-warning text-dark">@userRole</span>
+                                }
+                                else
+                                {
+
+                                    <span class="badge bg-secondary">@userRole</span>
+                                }
+                            </td>
+                            <td class="p-3 text-muted">@user.CreatedAt.ToString("dd.MM.yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div style="height: 80px;"></div>
