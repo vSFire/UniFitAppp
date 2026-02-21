@@ -113,7 +113,7 @@ namespace UniFitApp.Controllers
             return View(user);
         }
 
-        // ДЕЙСТВИЕ: Сохранить настройки (ОБНОВЛЕНО: BIO + SPEC)
+        // ДЕЙСТВИЕ: Сохранить настройки (ОБНОВЛЕНО: БЕЗОПАСНОЕ СОХРАНЕНИЕ ФОТО)
         [HttpPost]
         public async Task<IActionResult> Settings(AppUser model, IFormFile? avatarFile)
         {
@@ -131,16 +131,32 @@ namespace UniFitApp.Controllers
             // Если загрузили новое фото
             if (avatarFile != null)
             {
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
-                string path = Path.Combine(_appEnvironment.WebRootPath, "avatars");
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-                using (var fileStream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                try
                 {
-                    await avatarFile.CopyToAsync(fileStream);
-                }
+                    // Безопасное получение пути к wwwroot (на хостингах WebRootPath иногда бывает null)
+                    string webRootPath = _appEnvironment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-                user.ProfilePictureUrl = "/avatars/" + fileName;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
+                    string path = Path.Combine(webRootPath, "avatars");
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                    {
+                        await avatarFile.CopyToAsync(fileStream);
+                    }
+
+                    user.ProfilePictureUrl = "/avatars/" + fileName;
+                }
+                catch (Exception ex)
+                {
+                    // Выводим ошибку, если нет прав на папку или файл слишком велик, но не "роняем" сайт
+                    ModelState.AddModelError(string.Empty, "Ошибка при сохранении фото: " + ex.Message);
+                    return View(model);
+                }
             }
 
             await _userManager.UpdateAsync(user);

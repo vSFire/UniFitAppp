@@ -5,6 +5,17 @@ using UniFitApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// === ДОБАВЛЕНО: Увеличение лимита для загрузки больших фото с телефона ===
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 52428800; // 50 МБ
+});
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52428800; // 50 МБ
+});
+// =========================================================================
+
 // Добавляем сервисы (MVC)
 builder.Services.AddControllersWithViews();
 
