@@ -14,10 +14,8 @@ namespace UniFitApp.Models
 
         public string Description { get; set; }
 
-        // === НОВОЕ ПОЛЕ: ТИП ТРЕНИРОВКИ ===
         [Required]
-        public string Type { get; set; } = "General"; // Значение по умолчанию
-        // ==================================
+        public string Type { get; set; } = "General";
 
         [Required(ErrorMessage = "Дата обязательна")]
         public DateTime StartTime { get; set; }
@@ -28,6 +26,7 @@ namespace UniFitApp.Models
         [Range(1, 100, ErrorMessage = "Вместимость от 1 до 100")]
         public int Capacity { get; set; }
 
+        // === ПОЛЕ ДЛЯ ВИДЕОГИДА (Добавлено по новому дизайну) ===
         public string? VideoUrl { get; set; }
 
         public string CoachId { get; set; }

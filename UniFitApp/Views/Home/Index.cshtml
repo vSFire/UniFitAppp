@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using UniFitApp.Models
+@using UniFitApp.Controllers
 @inject UserManager<AppUser> UserManager
-@model IEnumerable<UniFitApp.Models.Workout>
+@model IEnumerable<WorkoutGroupViewModel>
 
 @{
     ViewData["Title"] = "Schedule";
@@ -11,7 +13,7 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="card mb-4 border-0" style="background-color: #1E1E1E; border-radius: 15px;">
+    <div class="card mb-4 border-0 w-100 me-3" style="background-color: #1E1E1E; border-radius: 15px;">
         <div class="card-body p-3">
             <form method="get" asp-action="Index">
                 <input type="hidden" name="date" value="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" />
@@ -23,13 +25,13 @@
                             <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-search"></i></span>
                             <input type="text" name="searchString" value="@ViewBag.CurrentSearch"
                                    class="form-control bg-dark text-white border-secondary"
-                                   placeholder="Search workout name...">
+                                   placeholder="Поиск направления...">
                         </div>
                     </div>
 
                     <div class="col-6">
                         <select name="workoutType" class="form-select bg-dark text-white border-secondary" onchange="this.form.submit()">
-                            <option value="">All Types</option>
+                            <option value="">Все типы</option>
                             <option value="Cardio" selected="@(ViewBag.CurrentType == "Cardio")">Cardio</option>
                             <option value="Strength" selected="@(ViewBag.CurrentType == "Strength")">Strength</option>
                             <option value="Yoga" selected="@(ViewBag.CurrentType == "Yoga")">Yoga</option>
@@ -40,10 +42,10 @@
 
                     <div class="col-6">
                         <select name="timeOfDay" class="form-select bg-dark text-white border-secondary" onchange="this.form.submit()">
-                            <option value="">Any Time</option>
-                            <option value="Morning" selected="@(ViewBag.CurrentTime == "Morning")">Morning (..-12)</option>
-                            <option value="Afternoon" selected="@(ViewBag.CurrentTime == "Afternoon")">Day (12-17)</option>
-                            <option value="Evening" selected="@(ViewBag.CurrentTime == "Evening")">Evening (17-..)</option>
+                            <option value="">Любое время</option>
+                            <option value="Morning" selected="@(ViewBag.CurrentTime == "Morning")">Утро (до 12)</option>
+                            <option value="Afternoon" selected="@(ViewBag.CurrentTime == "Afternoon")">День (12-17)</option>
+                            <option value="Evening" selected="@(ViewBag.CurrentTime == "Evening")">Вечер (после 17)</option>
                         </select>
                     </div>
 
@@ -51,7 +53,7 @@
                     {
                         <div class="col-12">
                             <a asp-action="Index" asp-route-date="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" class="btn btn-outline-secondary btn-sm w-100">
-                                <i class="fas fa-times me-1"></i> Clear Filters
+                                <i class="fas fa-times me-1"></i> Сбросить фильтры
                             </a>
                         </div>
                     }
@@ -59,24 +61,21 @@
             </form>
         </div>
     </div>
-    <div>
-        <h2 class="fw-bold text-white mb-0">Schedule</h2>
-        @if (showBookedOnly)
-        {
-            <p class="text-warning mb-0">My Booked Classes</p>
-        }
-        else
-        {
-            <p class="text-muted mb-0">@selectedDate.ToLocalTime().ToString("MMMM dd, yyyy")</p>
-        }
-    </div>
-
-    <a asp-controller="Account" asp-action="Notifications" class="btn btn-dark rounded-circle border-secondary position-relative" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
-        <i class="fas fa-bell text-white"></i>
-    </a>
 </div>
 
-<div class="d-flex justify-content-between overflow-auto mb-4 pb-2" style="@(showBookedOnly ? "opacity: 0.5; pointer-events: none;" : "")">
+<div>
+    <h2 class="fw-bold text-white mb-0">Расписание</h2>
+    @if (showBookedOnly)
+    {
+        <p class="text-warning mb-0">Мои записи</p>
+    }
+    else
+    {
+        <p class="text-muted mb-0">@selectedDate.ToLocalTime().ToString("MMMM dd, yyyy")</p>
+    }
+</div>
+
+<div class="d-flex justify-content-between overflow-auto my-4 pb-2" style="@(showBookedOnly ? "opacity: 0.5; pointer-events: none;" : "")">
     @{
         var today = DateTime.UtcNow.Date;
     }
@@ -89,8 +88,8 @@
            asp-route-date="@day.ToString("yyyy-MM-dd")"
            asp-route-showBookedOnly="false"
            class="text-decoration-none text-center rounded p-2 mx-1 flex-fill @(isActive ? "bg-warning text-dark" : "bg-dark text-muted")"
-           style="min-width: 60px; border: 1px solid #333;">
-            <div class="small fw-bold">@day.ToString("ddd")</div>
+           style="min-width: 65px; border: 1px solid #333;">
+            <div class="small fw-bold text-uppercase">@day.ToString("ddd")</div>
             <div class="fs-4 fw-bold">@day.Day</div>
         </a>
     }
@@ -99,11 +98,11 @@
 <div class="d-flex mb-4 bg-dark rounded p-1 border border-secondary" style="max-width: 300px;">
     <a asp-action="Index" asp-route-date="@selectedDate.ToString("yyyy-MM-dd")" asp-route-showBookedOnly="false"
        class="flex-fill btn btn-sm rounded fw-bold @(!showBookedOnly ? "bg-warning text-dark" : "text-muted")">
-        All Classes
+        Все занятия
     </a>
     <a asp-action="Index" asp-route-showBookedOnly="true"
        class="flex-fill btn btn-sm rounded fw-bold @(showBookedOnly ? "bg-warning text-dark" : "text-muted")">
-        Booked
+        Мои записи
     </a>
 </div>
 
@@ -111,90 +110,50 @@
 {
     <div class="text-center text-muted mt-5">
         <i class="fas fa-dumbbell fa-3x mb-3" style="opacity: 0.3;"></i>
-        <p>@(showBookedOnly ? "You haven't booked any classes yet." : "No classes scheduled.")</p>
+        <p>@(showBookedOnly ? "У вас пока нет записей." : "На этот день тренировок не запланировано.")</p>
     </div>
 }
 else
 {
-    @foreach (var item in Model)
+    @foreach (var group in Model)
     {
-        int spotsLeft = item.Capacity - item.Enrollments.Count;
-        bool isFull = spotsLeft <= 0;
-        bool isBooked = currentUser != null && item.Enrollments.Any(e => e.StudentId == currentUser.Id);
-
-        <div class="card mb-3 border-0" style="background-color: #1E1E1E; border-radius: 15px; border-left: 5px solid var(--primary-orange) !important;">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
+        <div class="card mb-3 border-0" style="background-color: #1E1E1E; border-radius: 20px;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
-                        <div class="small text-muted mb-2">
-                            <span class="text-white fw-bold">@item.StartTime.ToLocalTime().ToString("HH:mm")</span>
-                            @if (showBookedOnly)
-                            {
-                                <span class="badge bg-dark text-muted ms-2">@item.StartTime.ToLocalTime().ToString("dd MMM")</span>
-                            }
-                        </div>
-
-                        <h5 class="card-title text-white fw-bold mb-2">@item.Title</h5>
-
-                        <div class="mb-3">
-                            <a asp-controller="Home" asp-action="CoachProfile" asp-route-coachId="@item.CoachId"
-                               class="d-inline-flex align-items-center text-decoration-none py-1 pe-3 rounded"
-                               style="transition: 0.2s;">
-
-                                @if (!string.IsNullOrEmpty(item.Coach?.ProfilePictureUrl))
-                                {
-                                    <img src="@item.Coach.ProfilePictureUrl"
-                                         alt="Coach"
-                                         class="rounded-circle me-2 border border-warning"
-                                         style="width: 32px; height: 32px; object-fit: cover;">
-                                }
-                                else
-                                {
-                                    <div class="rounded-circle me-2 bg-dark border border-secondary d-flex align-items-center justify-content-center"
-                                         style="width: 32px; height: 32px;">
-                                        <span class="text-white fw-bold small">@(item.Coach?.FirstName?.Substring(0, 1) ?? "?")</span>
-                                    </div>
-                                }
-
-                                <div>
-                                    <span class="d-block text-warning fw-bold small" style="line-height: 1;">Coach @(item.Coach?.FirstName ?? "Unknown")</span>
-                                    <span class="d-block text-muted" style="font-size: 10px;">View Profile</span>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="small text-muted">
-                            <i class="fas fa-map-marker-alt me-1 text-secondary"></i> @item.Location
-                        </div>
+                        <h4 class="text-white fw-bold mb-1">@group.Title</h4>
+                        <p class="text-muted small mb-0" style="line-height: 1.4;">
+                            @(string.IsNullOrEmpty(group.Description) ? "Описание отсутствует" : group.Description)
+                        </p>
                     </div>
+                </div>
 
-                    <div class="d-flex flex-column align-items-end">
-                        @if (!isBooked)
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    @foreach (var session in group.Sessions)
+                    {
+                        bool isBooked = currentUser != null && session.Enrollments.Any(e => e.StudentId == currentUser.Id);
+                        int spotsLeft = session.Capacity - session.Enrollments.Count;
+                        bool isFull = spotsLeft <= 0;
+
+                        // Настраиваем дизайн кнопки в зависимости от статуса
+                        string btnClass = "btn-outline-secondary text-white border-secondary"; // Обычный слот
+                        if (isBooked)
                         {
-                            <span class="badge bg-dark border border-warning text-warning mb-3">@(isFull ? "FULL" : $"{spotsLeft} SPOTS")</span>
+                            btnClass = "btn-warning text-dark fw-bold"; // Записан
+                        }
+                        else if (isFull)
+                        {
+                            btnClass = "btn-dark text-muted border-dark disabled opacity-50"; // Мест нет
                         }
 
-                        <div class="d-flex gap-2 mt-2">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark btn-sm border-secondary text-white px-3">
-                                Info
-                            </a>
-
+                        <a asp-action="Details" asp-route-id="@session.Id" class="btn btn-sm @btnClass rounded-pill px-3 py-2" style="font-size: 14px; min-width: 75px;">
+                            @session.StartTime.ToLocalTime().ToString("HH:mm")
                             @if (isBooked)
                             {
-                                <button class="btn btn-success btn-sm px-3 fw-bold" disabled><i class="fas fa-check"></i></button>
+                                <i class="fas fa-check ms-1" style="font-size: 10px;"></i>
                             }
-                            else if (isFull)
-                            {
-                                <button class="btn btn-secondary btn-sm px-3 fw-bold" disabled>Full</button>
-                            }
-                            else
-                            {
-                                <form asp-action="Book" asp-route-id="@item.Id" method="post">
-                                    <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold text-white">Book</button>
-                                </form>
-                            }
-                        </div>
-                    </div>
+                        </a>
+                    }
                 </div>
             </div>
         </div>
