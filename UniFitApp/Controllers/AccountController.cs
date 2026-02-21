@@ -114,28 +114,24 @@ namespace UniFitApp.Controllers
         }
 
         // ДЕЙСТВИЕ: Сохранить настройки (ОБНОВЛЕНО: БЕЗОПАСНОЕ СОХРАНЕНИЕ ФОТО)
+        // ДЕЙСТВИЕ: Сохранить настройки (РЕЖИМ ЖЕСТКОЙ ОТЛАДКИ)
         [HttpPost]
         public async Task<IActionResult> Settings(AppUser model, IFormFile? avatarFile)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            // Базовые поля
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.PhoneNumber = model.PhoneNumber;
-
-            // Новые поля для тренера
-            user.Bio = model.Bio;
-            user.Specialization = model.Specialization;
-
-            // Если загрузили новое фото
-            if (avatarFile != null)
+            try
             {
-                try
-                {
-                    // Безопасное получение пути к wwwroot (на хостингах WebRootPath иногда бывает null)
-                    string webRootPath = _appEnvironment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Content("ОШИБКА: Пользователь не найден.");
 
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.PhoneNumber = model.PhoneNumber;
+                user.Bio = model.Bio;
+                user.Specialization = model.Specialization;
+
+                if (avatarFile != null)
+                {
+                    string webRootPath = _appEnvironment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
                     string path = Path.Combine(webRootPath, "avatars");
 
@@ -151,16 +147,20 @@ namespace UniFitApp.Controllers
 
                     user.ProfilePictureUrl = "/avatars/" + fileName;
                 }
-                catch (Exception ex)
-                {
-                    // Выводим ошибку, если нет прав на папку или файл слишком велик, но не "роняем" сайт
-                    ModelState.AddModelError(string.Empty, "Ошибка при сохранении фото: " + ex.Message);
-                    return View(model);
-                }
-            }
 
-            await _userManager.UpdateAsync(user);
-            return RedirectToAction("Profile");
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    return Content("ОШИБКА СОХРАНЕНИЯ В БД: " + string.Join(", ", updateResult.Errors.Select(e => e.Description)));
+                }
+
+                return RedirectToAction("Profile");
+            }
+            catch (Exception ex)
+            {
+                // Если ошибка в нашем коде или правах доступа, мы увидим её тут:
+                return Content($"КРИТИЧЕСКАЯ ОШИБКА В КОДЕ:\n\nСообщение: {ex.Message}\n\nГде упало: {ex.StackTrace}");
+            }
         }
 
         [HttpGet]
