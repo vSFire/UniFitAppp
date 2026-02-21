@@ -10,6 +10,19 @@
     <h3 class="fw-bold mb-0 text-white"><i class="fas fa-users text-warning me-2"></i> Users Management</h3>
 </div>
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger bg-danger text-white border-0 mb-3" style="border-radius: 12px;">
+        @TempData["Error"]
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success bg-success text-white border-0 mb-3" style="border-radius: 12px;">
+        @TempData["Success"]
+    </div>
+}
+
 <div class="card border-0" style="background-color: #1E1E1E; border-radius: 15px;">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -20,6 +33,7 @@
                         <th class="p-3 fw-normal">Email</th>
                         <th class="p-3 fw-normal">Role</th>
                         <th class="p-3 fw-normal">Registered</th>
+                        <th class="p-3 fw-normal text-end">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,6 +68,17 @@
                                 }
                             </td>
                             <td class="p-3 text-muted">@user.CreatedAt.ToString("dd.MM.yyyy")</td>
+
+                            <td class="p-3 text-end">
+                                @if (user.Email != "admin@unifit.com")
+                                {
+                                    <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post" class="d-inline" onsubmit="return confirm('Вы уверены, что хотите удалить пользователя @user.Email?');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>

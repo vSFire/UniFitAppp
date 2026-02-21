@@ -32,6 +32,38 @@ namespace UniFitApp.Controllers
             return View(users);
         }
 
+        // === ДОБАВЛЕНО: Метод удаления пользователя ===
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Защита от удаления главного админа
+            if (user.Email == "admin@unifit.com")
+            {
+                TempData["Error"] = "Вы не можете удалить Супер-Админа!";
+                return RedirectToAction("Users");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] = $"Пользователь {user.Email} успешно удален.";
+            }
+            else
+            {
+                TempData["Error"] = "Произошла ошибка при удалении пользователя.";
+            }
+
+            return RedirectToAction("Users");
+        }
+        // ===============================================
+
         public async Task<IActionResult> Workouts()
         {
             var workouts = await _context.Workouts
