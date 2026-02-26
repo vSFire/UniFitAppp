@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark mb-3">
+    <nav class="navbar navbar-light bg-white mb-3" style="border-bottom: 1px solid var(--border-light);">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" href="/">
                 <img src="~/images/logo.png" alt="UniFit" style="height: 40px; margin-right: 10px;">
@@ -23,29 +23,37 @@
             @if (User.Identity.IsAuthenticated)
             {
                 var currentUser = await UserManager.GetUserAsync(User);
-
                 var userInitial = "U";
                 if (currentUser != null && !string.IsNullOrEmpty(currentUser.FirstName))
                 {
                     userInitial = currentUser.FirstName.Substring(0, 1).ToUpper();
                 }
 
-                <a asp-controller="Account" asp-action="Profile" class="text-decoration-none">
-                    @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfilePictureUrl))
-                    {
-                        <img src="@currentUser.ProfilePictureUrl"
-                             alt="Avatar"
-                             class="rounded-circle"
-                             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid var(--primary-orange);">
-                    }
-                    else
-                    {
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                             style="width: 40px; height: 40px; border: 2px solid var(--primary-orange);">
-                            <span class="text-white fw-bold">@userInitial</span>
-                        </div>
-                    }
-                </a>
+                <div class="d-flex align-items-center gap-3">
+                    <a asp-controller="Account" asp-action="Notifications" class="text-decoration-none position-relative" style="color: var(--text-main);">
+                        <i class="fa-regular fa-bell" style="font-size: 22px;"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="width: 10px; height: 10px;">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                    </a>
+
+                    <a asp-controller="Account" asp-action="Profile" class="text-decoration-none">
+                        @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfilePictureUrl))
+                        {
+                            <img src="@currentUser.ProfilePictureUrl"
+                                 alt="Avatar"
+                                 class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid var(--primary-orange);">
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                 style="width: 40px; height: 40px; border: 2px solid var(--primary-orange);">
+                                <span class="text-white fw-bold">@userInitial</span>
+                            </div>
+                        }
+                    </a>
+                </div>
             }
         </div>
     </nav>
@@ -70,7 +78,6 @@
         bool isAdmin = User.IsInRole("Admin");
 
         <nav class="bottom-nav">
-
             @if (isAdmin)
             {
                 <a asp-controller="Admin" asp-action="Users" class="nav-item @(c == "Admin" && a == "Users" ? "active" : "")">
@@ -149,6 +156,5 @@
             }
         </nav>
     }
-
 </body>
 </html>

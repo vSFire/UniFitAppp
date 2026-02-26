@@ -8,23 +8,16 @@
     var selectedDate = (DateTime)(ViewBag.SelectedDate ?? DateTime.UtcNow.Date);
     var showAll = (bool)(ViewBag.ShowAll ?? false);
 
-    // Статистика (считаем сумму всех студентов на сегодня)
     int totalStudents = Model.Sum(w => w.Enrollments?.Count ?? 0);
     int activeHours = Model.Count();
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold text-white mb-0">Coach Dashboard</h2>
-        <p class="text-muted mb-0">@selectedDate.ToLocalTime().ToString("MMMM dd, yyyy")</p>
-    </div>
-
-    <a asp-controller="Account" asp-action="Notifications" class="btn btn-dark rounded-circle border-secondary position-relative" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
-        <i class="fas fa-bell text-white"></i>
-    </a>
+<div class="mb-4">
+    <h2 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Coach Dashboard</h2>
+    <p class="mb-0" style="color: var(--text-secondary);">@selectedDate.ToLocalTime().ToString("MMMM dd, yyyy")</p>
 </div>
 
-<div class="d-flex justify-content-between overflow-auto mb-4 pb-2">
+<div class="d-flex justify-content-between overflow-auto mb-4 pb-2" style="gap: 10px;">
     @{
         var today = DateTime.UtcNow.Date;
     }
@@ -36,26 +29,35 @@
         <a asp-action="Index"
            asp-route-date="@day.ToString("yyyy-MM-dd")"
            asp-route-showAll="@showAll"
-           class="text-decoration-none text-center rounded p-2 mx-1 flex-fill @(isActive ? "bg-warning text-dark" : "bg-dark text-muted")"
-           style="min-width: 60px; border: 1px solid #333;">
-            <div class="small fw-bold">@day.ToString("ddd")</div>
-            <div class="fs-4 fw-bold">@day.Day</div>
+           class="text-decoration-none text-center p-2 flex-fill"
+           style="min-width: 65px; border-radius: 16px; transition: 0.3s;
+                      background-color: @(isActive ? "var(--bg-card)" : "transparent");
+                      border: @(isActive ? "2px solid var(--primary-orange)" : "1px solid transparent");
+                      box-shadow: @(isActive ? "0 4px 10px rgba(0,0,0,0.05)" : "none");">
+            <div class="small fw-bold" style="color: @(isActive ? "var(--primary-orange)" : "var(--text-secondary)");">@day.ToString("ddd")</div>
+            <div class="fs-4 fw-bold" style="color: @(isActive ? "var(--text-main)" : "var(--text-secondary)");">@day.Day</div>
         </a>
     }
 </div>
 
-<div class="d-flex mb-4 bg-dark rounded p-1 border border-secondary" style="max-width: 350px;">
+<div class="d-flex mb-4 p-1" style="background-color: #EBEBEB; border-radius: 12px; max-width: 350px;">
     <a asp-action="Index"
        asp-route-date="@selectedDate.ToString("yyyy-MM-dd")"
        asp-route-showAll="false"
-       class="flex-fill btn btn-sm rounded fw-bold @(!showAll ? "bg-warning text-dark" : "text-muted")">
+       class="flex-fill btn btn-sm rounded fw-bold"
+       style="background-color: @(!showAll ? "var(--bg-card)" : "transparent");
+              color: @(!showAll ? "var(--text-main)" : "var(--text-secondary)");
+              box-shadow: @(!showAll ? "0 2px 5px rgba(0,0,0,0.05)" : "none"); border: none;">
         Мои тренировки
     </a>
     <a asp-action="Index"
        asp-route-date="@selectedDate.ToString("yyyy-MM-dd")"
        asp-route-showAll="true"
-       class="flex-fill btn btn-sm rounded fw-bold @(showAll ? "bg-warning text-dark" : "text-muted")">
-        Все тренировки зала
+       class="flex-fill btn btn-sm rounded fw-bold"
+       style="background-color: @(showAll ? "var(--bg-card)" : "transparent");
+              color: @(showAll ? "var(--text-main)" : "var(--text-secondary)");
+              box-shadow: @(showAll ? "0 2px 5px rgba(0,0,0,0.05)" : "none"); border: none;">
+        Все тренировки
     </a>
 </div>
 
@@ -63,34 +65,34 @@
 {
     <div class="row mb-4">
         <div class="col-6">
-            <div class="p-3 rounded" style="background-color: #1E1E1E; border: 1px solid #333;">
-                <small class="text-muted text-uppercase" style="font-size: 10px;"><i class="fas fa-users me-1"></i> Students Today</small>
-                <h2 class="fw-bold text-white mt-1 mb-0">@totalStudents</h2>
+            <div class="p-3" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
+                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-users me-1"></i> Students Today</small>
+                <h2 class="fw-bold mt-1 mb-0" style="color: var(--text-main);">@totalStudents</h2>
             </div>
         </div>
         <div class="col-6">
-            <div class="p-3 rounded" style="background-color: #1E1E1E; border: 1px solid #333;">
-                <small class="text-muted text-uppercase" style="font-size: 10px;"><i class="fas fa-clock me-1"></i> Classes Today</small>
-                <h2 class="fw-bold text-white mt-1 mb-0">@activeHours</h2>
+            <div class="p-3" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
+                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-clock me-1"></i> Classes Today</small>
+                <h2 class="fw-bold mt-1 mb-0" style="color: var(--text-main);">@activeHours</h2>
             </div>
         </div>
     </div>
 }
 
 <div class="mb-4">
-    <a asp-action="Create" class="btn btn-warning w-100 fw-bold py-3 shadow-sm" style="border-radius: 12px;">
-        <i class="fas fa-plus-circle me-2"></i> Create New Class
+    <a asp-action="Create" class="btn w-100 fw-bold py-3 shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 20px; border: none;">
+        <i class="fas fa-plus me-2"></i> Create New Class
     </a>
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="text-white fw-bold">Schedule for @selectedDate.ToLocalTime().ToString("dd MMM")</h5>
+    <h5 class="fw-bold" style="color: var(--text-main);">Schedule for @selectedDate.ToLocalTime().ToString("dd MMM")</h5>
 </div>
 
 @if (!Model.Any())
 {
-    <div class="text-center text-muted mt-5">
-        <i class="fas fa-calendar-day fa-3x mb-3" style="opacity: 0.2;"></i>
+    <div class="text-center mt-5" style="color: var(--text-secondary);">
+        <i class="fas fa-calendar-day fa-3x mb-3" style="opacity: 0.3;"></i>
         <p>No classes scheduled for today.</p>
     </div>
 }
@@ -101,55 +103,52 @@ else
         int count = item.Enrollments?.Count ?? 0;
         int cap = item.Capacity;
         int percent = (cap > 0) ? (count * 100 / cap) : 0;
-
         bool isMyClass = item.CoachId == currentUser.Id;
 
-        <div class="card mb-3 border-0" style="background-color: #1E1E1E; border-radius: 15px; border-left: 5px solid @(isMyClass ? "var(--primary-orange)" : "#6c757d") !important;">
+        <div class="card mb-3 border-0" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light); border-left: 5px solid @(isMyClass ? "var(--primary-orange)" : "#D1D1D1") !important;">
             <div class="card-body">
-
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-dark text-muted border border-secondary">
+                    <span class="badge fw-normal" style="background-color: #F0F0F0; color: var(--text-main);">
                         <i class="far fa-clock me-1"></i> @item.StartTime.ToLocalTime().ToString("HH:mm")
                     </span>
 
                     @if (isMyClass)
                     {
-                        <small class="text-success fw-bold" style="font-size: 11px;">
+                        <small class="fw-bold" style="font-size: 11px; color: var(--primary-orange);">
                             @count / @cap STUDENTS
                         </small>
                     }
                     else
                     {
-                        <small class="text-muted" style="font-size: 11px;">
+                        <small style="font-size: 11px; color: var(--text-secondary);">
                             <i class="fas fa-user-tie me-1"></i> @(item.Coach?.FirstName ?? "Other Coach")
                         </small>
                     }
                 </div>
 
-                <h5 class="card-title text-white fw-bold mb-3">@item.Title</h5>
+                <h5 class="card-title fw-bold mb-3" style="color: var(--text-main);">@item.Title</h5>
 
-                <div class="progress mb-3" style="height: 6px; background-color: #333;">
-                    <div class="progress-bar @(isMyClass ? "bg-warning" : "bg-secondary")" role="progressbar" style="width: @percent%"></div>
+                <div class="progress mb-3" style="height: 6px; background-color: #F0F0F0; border-radius: 10px;">
+                    <div class="progress-bar" role="progressbar" style="width: @percent%; background-color: @(isMyClass ? "var(--primary-orange)" : "#A0A0A0"); border-radius: 10px;"></div>
                 </div>
 
                 <div class="d-flex gap-2 mt-3">
                     @if (isMyClass)
                     {
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-light btn-sm flex-grow-1">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm flex-grow-1 fw-bold" style="background-color: #FFF3E0; color: var(--primary-orange); border: none; border-radius: 8px;">
                             <i class="fas fa-users me-2"></i> View Students
                         </a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm" title="Edit Class">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm fw-bold" style="background-color: #F0F0F0; color: var(--text-main); border: none; border-radius: 8px;" title="Edit Class">
                             <i class="fas fa-edit"></i>
                         </a>
                     }
                     else
                     {
-                        <button class="btn btn-secondary btn-sm w-100" disabled style="opacity: 0.5;">
+                        <button class="btn btn-sm w-100 fw-bold" disabled style="background-color: #F0F0F0; color: var(--text-secondary); border: none; border-radius: 8px;">
                             <i class="fas fa-lock me-2"></i> View Only
                         </button>
                     }
                 </div>
-
             </div>
         </div>
     }

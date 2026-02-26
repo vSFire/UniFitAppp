@@ -5,19 +5,23 @@
 <div class="row justify-content-center mt-5">
     <div class="col-md-6">
         <div class="auth-card">
-            <h3 class="text-white mb-4">Написать для @ViewBag.StudentName</h3>
+            <h3 class="fw-bold mb-4" style="color: var(--text-main);">Написать для @ViewBag.StudentName</h3>
 
             <form asp-action="SendMessage" method="post">
                 <input type="hidden" name="studentId" value="@ViewBag.StudentId" />
 
-                <div class="mb-3">
-                    <label class="text-muted small">Текст сообщения</label>
-                    <textarea name="message" class="form-control" rows="5" required placeholder="Например: Не забудь взять форму на завтра..."></textarea>
+                <div class="mb-4">
+                    <label class="small fw-bold mb-2" style="color: var(--text-secondary);">Текст сообщения</label>
+                    <textarea name="message" class="form-control" rows="5" required placeholder="Например: Не забудь взять форму на завтра..." style="border-radius: 12px; padding: 15px;"></textarea>
                 </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-warning fw-bold py-3">Отправить</button>
-                    <a asp-action="Students" class="btn btn-outline-light">Отмена</a>
+                <div class="d-grid gap-3">
+                    <button type="submit" class="btn py-3 fw-bold shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 16px; border: none;">
+                        Отправить
+                    </button>
+                    <a asp-action="Students" class="btn py-3 fw-bold" style="background-color: #F0F0F0; color: var(--text-main); border-radius: 16px; border: none;">
+                        Отмена
+                    </a>
                 </div>
             </form>
         </div>

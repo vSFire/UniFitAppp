@@ -8,10 +8,10 @@
 }
 
 <div class="d-flex align-items-center mb-4">
-    <a asp-action="Profile" class="text-decoration-none text-muted me-3">
+    <a asp-action="Profile" class="text-decoration-none me-3" style="color: var(--text-main);">
         <i class="fas fa-chevron-left fa-lg"></i>
     </a>
-    <h4 class="fw-bold text-white mb-0">Edit Profile</h4>
+    <h4 class="fw-bold mb-0" style="color: var(--text-main);">Edit Profile</h4>
 </div>
 
 <div class="auth-card">
@@ -21,51 +21,52 @@
             <div class="position-relative d-inline-block">
                 @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
                 {
-                    <img src="@Model.ProfilePictureUrl" class="rounded-circle border border-warning" style="width: 100px; height: 100px; object-fit: cover;">
+                    <img src="@Model.ProfilePictureUrl" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid var(--primary-orange);">
                 }
                 else
                 {
-                    <div style="width: 100px; height: 100px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 2px solid var(--primary-orange);">
-                        <span class="fs-1 text-white">@Model.FirstName.Substring(0, 1)</span>
+                    <div style="width: 100px; height: 100px; background-color: #F0F0F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 3px solid var(--primary-orange);">
+                        <span class="fs-1 fw-bold" style="color: var(--text-main);">@Model.FirstName.Substring(0, 1)</span>
                     </div>
                 }
 
-                <label for="avatarUpload" class="position-absolute bottom-0 end-0 bg-warning text-dark rounded-circle p-2" style="cursor: pointer;">
+                <label for="avatarUpload" class="position-absolute bottom-0 end-0 rounded-circle p-2 shadow-sm" style="cursor: pointer; background-color: #FFF3E0; color: var(--primary-orange); border: 2px solid white; transform: translate(10%, 10%);">
                     <i class="fas fa-camera"></i>
                 </label>
                 <input type="file" id="avatarUpload" name="avatarFile" class="d-none" accept="image/*">
             </div>
-            <p class="text-muted small mt-2">Tap icon to change photo</p>
+            <p class="small mt-3 fw-bold" style="color: var(--primary-orange);">Tap icon to change photo</p>
         </div>
 
         <div class="mb-3">
-            <label class="text-muted small">First Name</label>
+            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">First Name</label>
             <input asp-for="FirstName" class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label class="text-muted small">Last Name</label>
+            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Last Name</label>
             <input asp-for="LastName" class="form-control" />
         </div>
 
         @if (isCoach)
         {
             <div class="mb-3">
-                <label class="text-muted small">Specialization</label>
+                <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Specialization</label>
                 <input asp-for="Specialization" class="form-control" placeholder="e.g. Yoga, Boxing, CrossFit" />
             </div>
 
             <div class="mb-3">
-                <label class="text-muted small">Bio (About Me)</label>
+                <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Bio (About Me)</label>
                 <textarea asp-for="Bio" class="form-control" rows="3" placeholder="Tell students about your experience..."></textarea>
             </div>
         }
 
         <div class="mb-3">
-            <label class="text-muted small">Phone Number</label>
+            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Phone Number</label>
             <input asp-for="PhoneNumber" class="form-control" placeholder="+7..." />
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold mt-3">Save Changes</button>
+        <button type="submit" class="btn w-100 py-3 fw-bold mt-3 shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 16px;">Save Changes</button>
     </form>
 </div>
+<div style="height: 80px;"></div>

@@ -5,38 +5,49 @@
 }
 
 <div class="d-flex align-items-center mb-4">
-    <h3 class="fw-bold mb-0 text-white"><i class="fas fa-list text-warning me-2"></i> All System Workouts</h3>
+    <h3 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-list me-2" style="color: var(--primary-orange);"></i> All System Workouts</h3>
 </div>
 
-<div class="card border-0" style="background-color: #1E1E1E; border-radius: 15px;">
+<div class="card border-0 mb-4" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0" style="border-radius: 15px; overflow: hidden;">
-                <thead class="text-muted" style="background-color: #2b2b2b;">
+            <table class="table table-hover mb-0" style="border-radius: 16px; overflow: hidden; margin-bottom: 0;">
+                <thead style="background-color: #F7F7F7;">
                     <tr>
-                        <th class="p-3 fw-normal">Date & Time</th>
-                        <th class="p-3 fw-normal">Title & Type</th>
-                        <th class="p-3 fw-normal">Coach</th>
-                        <th class="p-3 fw-normal">Location</th>
-                        <th class="p-3 fw-normal text-center">Enrollment</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Date & Time</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Title & Type</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Coach</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Location</th>
+                        <th class="p-3 fw-bold border-bottom-0 text-center" style="color: var(--text-secondary);">Enrollment</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var w in Model)
                     {
-                        <tr style="border-bottom: 1px solid #333;">
-                            <td class="p-3 text-white">
-                                <span class="d-block fw-bold">@w.StartTime.ToLocalTime().ToString("dd MMM yyyy")</span>
-                                <small class="text-muted">@w.StartTime.ToLocalTime().ToString("HH:mm")</small>
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td class="p-3 align-middle">
+                                <span class="d-block fw-bold" style="color: var(--text-main);">@w.StartTime.ToLocalTime().ToString("dd MMM yyyy")</span>
+                                <small style="color: var(--text-secondary);"><i class="far fa-clock me-1"></i> @w.StartTime.ToLocalTime().ToString("HH:mm")</small>
                             </td>
-                            <td class="p-3">
-                                <span class="text-white fw-bold d-block">@w.Title</span>
-                                <span class="badge bg-secondary">@w.Type</span>
+                            <td class="p-3 align-middle">
+                                <span class="fw-bold d-block mb-1" style="color: var(--text-main);">@w.Title</span>
+                                <span class="badge px-2 py-1" style="background-color: #F0F0F0; color: var(--text-secondary);">@w.Type</span>
                             </td>
-                            <td class="p-3 text-warning">@(w.Coach?.FirstName ?? "Deleted")</td>
-                            <td class="p-3 text-muted">@w.Location</td>
-                            <td class="p-3 text-center fw-bold @(w.Enrollments.Count >= w.Capacity ? "text-danger" : "text-success")">
-                                @w.Enrollments.Count / @w.Capacity
+                            <td class="p-3 align-middle fw-bold" style="color: var(--primary-orange);">
+                                <i class="fas fa-user-tie me-1"></i> @(w.Coach?.FirstName ?? "Deleted")
+                            </td>
+                            <td class="p-3 align-middle" style="color: var(--text-secondary);">
+                                <i class="fas fa-map-marker-alt me-1"></i> @w.Location
+                            </td>
+                            <td class="p-3 align-middle text-center fw-bold">
+                                @if (w.Enrollments.Count >= w.Capacity)
+                                {
+                                    <span style="color: #D32F2F;">@w.Enrollments.Count / @w.Capacity (Full)</span>
+                                }
+                                else
+                                {
+                                    <span style="color: #198754;">@w.Enrollments.Count / @w.Capacity</span>
+                                }
                             </td>
                         </tr>
                     }

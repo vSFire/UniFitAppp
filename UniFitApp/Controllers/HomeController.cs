@@ -61,18 +61,24 @@ namespace UniFitApp.Controllers
                 query = query.Where(w => w.Type == workoutType);
             }
 
+            // Выгружаем в память для работы с локальным временем
+            var rawWorkouts = await query.ToListAsync();
+
+            // Применяем фильтр по времени суток УЖЕ в локальном времени
             if (!string.IsNullOrEmpty(timeOfDay) && timeOfDay != "All")
             {
-                if (timeOfDay == "Morning") query = query.Where(w => w.StartTime.Hour < 12);
-                else if (timeOfDay == "Afternoon") query = query.Where(w => w.StartTime.Hour >= 12 && w.StartTime.Hour < 17);
-                else if (timeOfDay == "Evening") query = query.Where(w => w.StartTime.Hour >= 17);
+                rawWorkouts = rawWorkouts.Where(w =>
+                {
+                    var localHour = w.StartTime.ToLocalTime().Hour;
+                    if (timeOfDay == "Morning") return localHour < 12;
+                    if (timeOfDay == "Afternoon") return localHour >= 12 && localHour < 17;
+                    if (timeOfDay == "Evening") return localHour >= 17;
+                    return false;
+                }).ToList();
             }
 
-            var rawWorkouts = await query.OrderBy(w => w.StartTime).ToListAsync();
+            rawWorkouts = rawWorkouts.OrderBy(w => w.StartTime).ToList();
 
-            // === ГРУППИРОВКА (Магия для нового дизайна) ===
-            // Мы группируем тренировки по названию. Если в один день есть три тренировки "CrossFit",
-            // они соберутся в одну группу.
             var groupedWorkouts = rawWorkouts
                 .GroupBy(w => new { w.Title, w.Description, w.Type })
                 .Select(g => new WorkoutGroupViewModel
@@ -80,7 +86,7 @@ namespace UniFitApp.Controllers
                     Title = g.Key.Title,
                     Description = g.Key.Description,
                     Type = g.Key.Type,
-                    Sessions = g.ToList() // Список конкретных тренировок (со временем и тренерами)
+                    Sessions = g.ToList()
                 })
                 .ToList();
 

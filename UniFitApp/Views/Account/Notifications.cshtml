@@ -5,32 +5,33 @@
 
 <div class="container mt-4">
     <div class="d-flex align-items-center mb-4">
-        <a asp-action="Profile" class="text-decoration-none text-muted me-3">
+        <a asp-action="Profile" class="text-decoration-none me-3" style="color: var(--text-main);">
             <i class="fas fa-chevron-left fa-lg"></i>
         </a>
-        <h3 class="text-white fw-bold mb-0">Мои уведомления</h3>
+        <h3 class="fw-bold mb-0" style="color: var(--text-main);">Мои уведомления</h3>
     </div>
 
     @if (!Model.Any())
     {
-        <div class="text-center text-muted mt-5">
-            <i class="fas fa-bell-slash fa-3x mb-3"></i>
+        <div class="text-center mt-5" style="color: var(--text-secondary);">
+            <i class="fas fa-bell-slash fa-3x mb-3" style="opacity: 0.3;"></i>
             <p>Новых уведомлений нет</p>
         </div>
     }
     else
     {
-        <div class="list-group">
+        <div class="d-flex flex-column gap-3">
             @foreach (var item in Model)
             {
-                <div class="list-group-item bg-dark text-white border-secondary mb-2 rounded p-3">
-                    <div class="d-flex w-100 justify-content-between">
-                        <small class="text-warning">Системное сообщение</small>
-                        <small class="text-muted">@item.CreatedAt.ToLocalTime().ToString("g")</small>
+                <div class="p-4" style="background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-light); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                    <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                        <span class="badge" style="background-color: #FFF3E0; color: var(--primary-orange);">Системное сообщение</span>
+                        <small style="color: var(--text-secondary);">@item.CreatedAt.ToLocalTime().ToString("g")</small>
                     </div>
-                    <p class="mb-1 mt-2">@item.Message</p>
+                    <p class="mb-0 fw-bold mt-2" style="color: var(--text-main);">@item.Message</p>
                 </div>
             }
         </div>
     }
 </div>
+<div style="height: 80px;"></div>

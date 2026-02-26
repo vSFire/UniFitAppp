@@ -7,33 +7,33 @@
 }
 
 <div class="d-flex align-items-center mb-4">
-    <h3 class="fw-bold mb-0 text-white"><i class="fas fa-users text-warning me-2"></i> Users Management</h3>
+    <h3 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-users me-2" style="color: var(--primary-orange);"></i> Users Management</h3>
 </div>
 
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger bg-danger text-white border-0 mb-3" style="border-radius: 12px;">
-        @TempData["Error"]
+    <div class="alert text-danger border-0 mb-3 shadow-sm" style="background-color: #FFF0F0; border-radius: 12px; font-weight: bold;">
+        <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
     </div>
 }
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success bg-success text-white border-0 mb-3" style="border-radius: 12px;">
-        @TempData["Success"]
+    <div class="alert text-success border-0 mb-3 shadow-sm" style="background-color: #E8F5E9; border-radius: 12px; font-weight: bold;">
+        <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
     </div>
 }
 
-<div class="card border-0" style="background-color: #1E1E1E; border-radius: 15px;">
+<div class="card border-0 mb-4" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0" style="border-radius: 15px; overflow: hidden;">
-                <thead class="text-muted" style="background-color: #2b2b2b;">
+            <table class="table table-hover mb-0" style="border-radius: 16px; overflow: hidden; margin-bottom: 0;">
+                <thead style="background-color: #F7F7F7;">
                     <tr>
-                        <th class="p-3 fw-normal">Name</th>
-                        <th class="p-3 fw-normal">Email</th>
-                        <th class="p-3 fw-normal">Role</th>
-                        <th class="p-3 fw-normal">Registered</th>
-                        <th class="p-3 fw-normal text-end">Action</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Name</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Email</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Role</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Registered</th>
+                        <th class="p-3 fw-bold border-bottom-0 text-end" style="color: var(--text-secondary);">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,38 +42,44 @@
                         var roles = await UserManager.GetRolesAsync(user);
                         string userRole = roles.FirstOrDefault() ?? "No Role";
 
-                        <tr style="border-bottom: 1px solid #333;">
-                            <td class="p-3 text-white fw-bold">
-                                @if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
-                                {
-                                    <img src="@user.ProfilePictureUrl" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit:cover;">
-                                }
-                                @user.FirstName @user.LastName
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td class="p-3 align-middle" style="color: var(--text-main); font-weight: 500;">
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+                                    {
+                                        <img src="@user.ProfilePictureUrl" class="rounded-circle me-3 shadow-sm" style="width: 35px; height: 35px; object-fit:cover; border: 1px solid var(--border-light);">
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold" style="width: 35px; height: 35px; background-color: #F0F0F0; color: var(--text-secondary); border: 1px solid var(--border-light);">
+                                            @user.FirstName?.Substring(0, 1)
+                                        </div>
+                                    }
+                                    @user.FirstName @user.LastName
+                                </div>
                             </td>
-                            <td class="p-3 text-muted">@user.Email</td>
-                            <td class="p-3">
+                            <td class="p-3 align-middle" style="color: var(--text-secondary);">@user.Email</td>
+                            <td class="p-3 align-middle">
                                 @if (userRole == "Admin")
                                 {
-                                    <span class="badge bg-danger">@userRole</span>
+                                    <span class="badge px-2 py-1" style="background-color: #FFEAE6; color: #D32F2F;">@userRole</span>
                                 }
                                 else if (userRole == "Coach")
                                 {
-
-                                    <span class="badge bg-warning text-dark">@userRole</span>
+                                    <span class="badge px-2 py-1" style="background-color: #FFF3E0; color: var(--primary-orange);">@userRole</span>
                                 }
                                 else
                                 {
-
-                                    <span class="badge bg-secondary">@userRole</span>
+                                    <span class="badge px-2 py-1" style="background-color: #E3F2FD; color: #1976D2;">@userRole</span>
                                 }
                             </td>
-                            <td class="p-3 text-muted">@user.CreatedAt.ToString("dd.MM.yyyy")</td>
+                            <td class="p-3 align-middle" style="color: var(--text-secondary);">@user.CreatedAt.ToString("dd.MM.yyyy")</td>
 
-                            <td class="p-3 text-end">
+                            <td class="p-3 align-middle text-end">
                                 @if (user.Email != "admin@unifit.com")
                                 {
                                     <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post" class="d-inline" onsubmit="return confirm('Вы уверены, что хотите удалить пользователя @user.Email?');">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        <button type="submit" class="btn btn-sm rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; background-color: #FFF0F0; color: #D32F2F; border: none;">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
