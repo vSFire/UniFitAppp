@@ -1,3 +1,4 @@
+п»ї@charset "UTF-8";
 :root {
     --primary-orange: #FF5E00;
     --bg-main: #F7F7F7;
@@ -47,7 +48,7 @@ body {
     color: white;
 }
 
-/* --- Навигация (Базовая для мобилок) --- */
+/* ---           (                   ) --- */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -100,11 +101,11 @@ body {
     border: 4px solid var(--bg-main);
 }
 
-/* --- МАГИЯ ДЛЯ КОМПЬЮТЕРОВ (DESKTOP) --- */
+/* ---                       (DESKTOP) --- */
 @media (min-width: 992px) {
     body {
         margin-bottom: 0;
-        padding-left: 260px; /* Отступ слева для контента */
+        padding-left: 260px; /*                           */
     }
 
     .navbar {
@@ -177,7 +178,7 @@ body {
     }
 
         .plus-btn::after {
-            content: "Create Workout";
+            content: "                  ";
             font-weight: bold;
         }
 }
