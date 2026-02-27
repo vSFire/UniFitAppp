@@ -30,15 +30,15 @@
             <div class="mb-4">
                 @if (User.IsInRole("Admin"))
                 {
-                    <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #FFEAE6; color: #D32F2F;">ADMIN</span>
+                    <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #FFEAE6; color: #D32F2F;">Админ</span>
                 }
                 else if (User.IsInRole("Coach"))
                 {
-                    <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #FFF3E0; color: var(--primary-orange);">COACH</span>
+                    <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #FFF3E0; color: var(--primary-orange);">Тренер</span>
                 }
                 else
                 {
-                    <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #E3F2FD; color: #1976D2;">STUDENT</span>
+                    <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #E3F2FD; color: #1976D2;">Студент</span>
                 }
             </div>
 
@@ -56,7 +56,7 @@
 
             <form asp-action="Logout" method="post">
                 <button type="submit" class="btn w-100 py-3 fw-bold" style="background-color: #FFF0F0; color: #D32F2F; border: none; border-radius: 16px;">
-                    <i class="fas fa-sign-out-alt me-2"></i> Sign Out
+                    <i class="fas fa-sign-out-alt me-2"></i> Выйти из аккаунта
                 </button>
             </form>
 

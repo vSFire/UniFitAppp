@@ -11,7 +11,7 @@
     <a asp-action="Profile" class="text-decoration-none me-3" style="color: var(--text-main);">
         <i class="fas fa-chevron-left fa-lg"></i>
     </a>
-    <h4 class="fw-bold mb-0" style="color: var(--text-main);">Edit Profile</h4>
+    <h4 class="fw-bold mb-0" style="color: var(--text-main);">Редактировать профиль</h4>
 </div>
 
 <div class="auth-card">
@@ -35,38 +35,38 @@
                 </label>
                 <input type="file" id="avatarUpload" name="avatarFile" class="d-none" accept="image/*">
             </div>
-            <p class="small mt-3 fw-bold" style="color: var(--primary-orange);">Tap icon to change photo</p>
+            <p class="small mt-3 fw-bold" style="color: var(--primary-orange);">Нажмите на иконку, чтобы изменить фотоo</p>
         </div>
 
         <div class="mb-3">
-            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">First Name</label>
+            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Имя</label>
             <input asp-for="FirstName" class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Last Name</label>
+            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Фамилия</label>
             <input asp-for="LastName" class="form-control" />
         </div>
 
         @if (isCoach)
         {
             <div class="mb-3">
-                <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Specialization</label>
-                <input asp-for="Specialization" class="form-control" placeholder="e.g. Yoga, Boxing, CrossFit" />
+                <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Специализация</label>
+                <input asp-for="Specialization" class="form-control" placeholder="напрмиер Йога,Бокс..." />
             </div>
 
             <div class="mb-3">
-                <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Bio (About Me)</label>
-                <textarea asp-for="Bio" class="form-control" rows="3" placeholder="Tell students about your experience..."></textarea>
+                <label class="small fw-bold mb-1" style="color: var(--text-secondary);">О себе</label>
+                <textarea asp-for="Bio" class="form-control" rows="3" placeholder="Расскажите студентам о вашем опыте.."></textarea>
             </div>
         }
 
         <div class="mb-3">
-            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Phone Number</label>
+            <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Номер телефона</label>
             <input asp-for="PhoneNumber" class="form-control" placeholder="+7..." />
         </div>
 
-        <button type="submit" class="btn w-100 py-3 fw-bold mt-3 shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 16px;">Save Changes</button>
+        <button type="submit" class="btn w-100 py-3 fw-bold mt-3 shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 16px;">Сохранить изменения</button>
     </form>
 </div>
 <div style="height: 80px;"></div>

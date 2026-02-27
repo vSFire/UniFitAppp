@@ -5,7 +5,7 @@
 }
 
 <div class="d-flex align-items-center mb-4">
-    <h3 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-list me-2" style="color: var(--primary-orange);"></i> All System Workouts</h3>
+    <h3 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-list me-2" style="color: var(--primary-orange);"></i> Все тренировки зала</h3>
 </div>
 
 <div class="card border-0 mb-4" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
@@ -14,11 +14,11 @@
             <table class="table table-hover mb-0" style="border-radius: 16px; overflow: hidden; margin-bottom: 0;">
                 <thead style="background-color: #F7F7F7;">
                     <tr>
-                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Date & Time</th>
-                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Title & Type</th>
-                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Coach</th>
-                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Location</th>
-                        <th class="p-3 fw-bold border-bottom-0 text-center" style="color: var(--text-secondary);">Enrollment</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Дата и время</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Название и тип</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Тренер</th>
+                        <th class="p-3 fw-bold border-bottom-0" style="color: var(--text-secondary);">Локация</th>
+                        <th class="p-3 fw-bold border-bottom-0 text-center" style="color: var(--text-secondary);">Запись</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,7 +34,7 @@
                                 <span class="badge px-2 py-1" style="background-color: #F0F0F0; color: var(--text-secondary);">@w.Type</span>
                             </td>
                             <td class="p-3 align-middle fw-bold" style="color: var(--primary-orange);">
-                                <i class="fas fa-user-tie me-1"></i> @(w.Coach?.FirstName ?? "Deleted")
+                                <i class="fas fa-user-tie me-1"></i> @(w.Coach?.FirstName ?? "Удален")
                             </td>
                             <td class="p-3 align-middle" style="color: var(--text-secondary);">
                                 <i class="fas fa-map-marker-alt me-1"></i> @w.Location

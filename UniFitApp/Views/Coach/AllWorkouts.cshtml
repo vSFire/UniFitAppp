@@ -9,7 +9,7 @@
 }
 
 <div class="d-flex align-items-center mb-4">
-    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Gym Schedule</h4>
+    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Расписание занятий</h4>
 </div>
 
 <div class="d-flex mb-4 p-1" style="background-color: #EBEBEB; border-radius: 12px; max-width: 300px;">
@@ -18,14 +18,14 @@
        style="background-color: @(showAll ? "var(--bg-card)" : "transparent");
               color: @(showAll ? "var(--text-main)" : "var(--text-secondary)");
               box-shadow: @(showAll ? "0 2px 5px rgba(0,0,0,0.05)" : "none"); border: none;">
-        All Classes
+        Все тренировки
     </a>
     <a asp-action="AllWorkouts" asp-route-showAll="false"
        class="flex-fill btn btn-sm rounded fw-bold"
        style="background-color: @(!showAll ? "var(--bg-card)" : "transparent");
               color: @(!showAll ? "var(--text-main)" : "var(--text-secondary)");
               box-shadow: @(!showAll ? "0 2px 5px rgba(0,0,0,0.05)" : "none"); border: none;">
-        My Classes
+        Мои тренировки
     </a>
 </div>
 
@@ -65,7 +65,7 @@ else
                             {
                                 <i class="fas fa-user-circle me-2 fs-5"></i>
                             }
-                            <span>@(isMyClass ? "You" : $"Coach {item.Coach?.FirstName}")</span>
+                            <span>@(isMyClass ? "Вы" : $"Тренер {item.Coach?.FirstName}")</span>
                         </div>
                     </div>
 
@@ -80,13 +80,13 @@ else
                     @if (isMyClass)
                     {
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm w-100 fw-bold py-2" style="background-color: #FFF3E0; color: var(--primary-orange); border: none; border-radius: 10px;">
-                            Manage Class
+                            Управление занятием
                         </a>
                     }
                     else
                     {
                         <button class="btn btn-sm w-100 fw-bold py-2" disabled style="background-color: #F0F0F0; color: #A0A0A0; border: none; border-radius: 10px;">
-                            <i class="fas fa-lock me-1"></i> View Only
+                            <i class="fas fa-lock me-1"></i> Только просмотр
                         </button>
                     }
                 </div>

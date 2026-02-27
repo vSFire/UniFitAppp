@@ -13,7 +13,7 @@
 }
 
 <div class="mb-4">
-    <h2 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Coach Dashboard</h2>
+    <h2 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Панель тренера</h2>
     <p class="mb-0" style="color: var(--text-secondary);">@selectedDate.ToLocalTime().ToString("MMMM dd, yyyy")</p>
 </div>
 
@@ -66,13 +66,13 @@
     <div class="row mb-4">
         <div class="col-6">
             <div class="p-3" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
-                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-users me-1"></i> Students Today</small>
+                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-users me-1"></i> Студентов сегодня</small>
                 <h2 class="fw-bold mt-1 mb-0" style="color: var(--text-main);">@totalStudents</h2>
             </div>
         </div>
         <div class="col-6">
             <div class="p-3" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
-                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-clock me-1"></i> Classes Today</small>
+                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-clock me-1"></i> Занятий сегодня</small>
                 <h2 class="fw-bold mt-1 mb-0" style="color: var(--text-main);">@activeHours</h2>
             </div>
         </div>
@@ -81,19 +81,19 @@
 
 <div class="mb-4">
     <a asp-action="Create" class="btn w-100 fw-bold py-3 shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 20px; border: none;">
-        <i class="fas fa-plus me-2"></i> Create New Class
+        <i class="fas fa-plus me-2"></i> Создать тренировку
     </a>
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="fw-bold" style="color: var(--text-main);">Schedule for @selectedDate.ToLocalTime().ToString("dd MMM")</h5>
+    <h5 class="fw-bold" style="color: var(--text-main);">Расписание на @selectedDate.ToLocalTime().ToString("dd MMM")</h5>
 </div>
 
 @if (!Model.Any())
 {
     <div class="text-center mt-5" style="color: var(--text-secondary);">
         <i class="fas fa-calendar-day fa-3x mb-3" style="opacity: 0.3;"></i>
-        <p>No classes scheduled for today.</p>
+        <p>На сегодня нет запланированных тренировок.</p>
     </div>
 }
 else
@@ -115,13 +115,13 @@ else
                     @if (isMyClass)
                     {
                         <small class="fw-bold" style="font-size: 11px; color: var(--primary-orange);">
-                            @count / @cap STUDENTS
+                            @count / @cap Студентов
                         </small>
                     }
                     else
                     {
                         <small style="font-size: 11px; color: var(--text-secondary);">
-                            <i class="fas fa-user-tie me-1"></i> @(item.Coach?.FirstName ?? "Other Coach")
+                            <i class="fas fa-user-tie me-1"></i> @(item.Coach?.FirstName ?? "Другой тренер")
                         </small>
                     }
                 </div>
@@ -136,7 +136,7 @@ else
                     @if (isMyClass)
                     {
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm flex-grow-1 fw-bold" style="background-color: #FFF3E0; color: var(--primary-orange); border: none; border-radius: 8px;">
-                            <i class="fas fa-users me-2"></i> View Students
+                            <i class="fas fa-users me-2"></i> Список студентов
                         </a>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm fw-bold" style="background-color: #F0F0F0; color: var(--text-main); border: none; border-radius: 8px;" title="Edit Class">
                             <i class="fas fa-edit"></i>
@@ -145,7 +145,7 @@ else
                     else
                     {
                         <button class="btn btn-sm w-100 fw-bold" disabled style="background-color: #F0F0F0; color: var(--text-secondary); border: none; border-radius: 8px;">
-                            <i class="fas fa-lock me-2"></i> View Only
+                            <i class="fas fa-lock me-2"></i> Только просмотр
                         </button>
                     }
                 </div>

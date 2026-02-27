@@ -1,7 +1,7 @@
 ﻿@model UniFitApp.Models.Workout
 
 @{
-    ViewData["Title"] = "Новая тренировка";
+    ViewData["Title"] = "Создание тренировки";
 }
 
 <div class="row justify-content-center">
@@ -11,7 +11,7 @@
             <a asp-action="Index" class="text-decoration-none me-3" style="color: var(--text-main);">
                 <i class="fas fa-chevron-left fa-lg"></i>
             </a>
-            <h3 class="fw-bold mb-0" style="color: var(--text-main);">Create New Class</h3>
+            <h3 class="fw-bold mb-0" style="color: var(--text-main);">Создание тренировки</h3>
         </div>
 
         <div class="auth-card">
@@ -19,49 +19,49 @@
                 <div asp-validation-summary="All" class="text-danger small mb-2"></div>
 
                 <div class="mb-3">
-                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Class Name</label>
-                    <input asp-for="Title" class="form-control" placeholder="e.g. HIIT Intensity Training" />
+                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Название тренировки</label>
+                    <input asp-for="Title" class="form-control" placeholder="например: Интенсивная HIIT-тренировка" />
                 </div>
                 <div class="mb-3">
-                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Workout Type</label>
+                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Тип тренировки</label>
                     <select asp-for="Type" class="form-select" style="background-color: var(--bg-main); border: 1px solid var(--border-light); color: var(--text-main); border-radius: 12px; padding: 12px;">
-                        <option value="General">General (Общая)</option>
-                        <option value="Cardio">Cardio (Кардио)</option>
-                        <option value="Strength">Strength (Силовая)</option>
-                        <option value="Yoga">Yoga/Pilates (Йога)</option>
-                        <option value="Boxing">Boxing (Бокс)</option>
-                        <option value="CrossFit">CrossFit</option>
+                        <option value="General">Общая</option>
+                        <option value="Cardio">Кардио</option>
+                        <option value="Strength">Силовая</option>
+                        <option value="Yoga">Йога / Пилатес</option>
+                        <option value="Boxing">Бокс</option>
+                        <option value="CrossFit">Кроссфит</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Select Date & Time</label>
+                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Выберите дату и время</label>
                     <input asp-for="StartTime" class="form-control" type="datetime-local" />
                 </div>
 
                 <div class="row">
                     <div class="col-6 mb-3">
-                        <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Capacity</label>
+                        <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Вместимость (чел)</label>
                         <input asp-for="Capacity" class="form-control" type="number" value="20" />
                     </div>
                     <div class="col-6 mb-3">
-                        <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Location</label>
-                        <input asp-for="Location" class="form-control" placeholder="e.g. Studio B" />
+                        <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Локация</label>
+                        <input asp-for="Location" class="form-control" placeholder="например: Зал B" />
                     </div>
                 </div>
 
                 <div class="mb-3 p-3 rounded text-center" style="border: 1px dashed var(--primary-orange); background-color: #FFF3E0;">
                     <i class="fab fa-youtube fa-2x mb-2" style="color: var(--primary-orange);"></i>
-                    <p class="small fw-bold mb-2" style="color: var(--primary-orange);">Add YouTube Video Link</p>
+                    <p class="small fw-bold mb-2" style="color: var(--primary-orange);">Ссылка на YouTube-видео</p>
                     <input asp-for="VideoUrl" class="form-control form-control-sm text-center bg-white" placeholder="https://youtube.com/watch?v=..." style="border-color: var(--border-light); color: var(--text-main);" />
-                    <small style="font-size: 10px; color: var(--text-secondary);">Paste full YouTube link here</small>
+                    <small style="font-size: 10px; color: var(--text-secondary);">Вставьте сюда полную ссылку на YouTube</small>
                 </div>
 
                 <div class="mb-4">
-                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Briefly describe what students will learn..."></textarea>
+                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Описание</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Кратко опишите план занятия..."></textarea>
                 </div>
 
-                <button type="submit" class="btn w-100 py-3 fw-bold shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 16px;">Publish Class</button>
+                <button type="submit" class="btn w-100 py-3 fw-bold shadow-sm" style="background-color: var(--primary-orange); color: white; border-radius: 16px;">Опубликовать тренировку</button>
             </form>
         </div>
 

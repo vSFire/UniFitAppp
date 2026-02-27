@@ -82,15 +82,15 @@
             {
                 <a asp-controller="Admin" asp-action="Users" class="nav-item @(c == "Admin" && a == "Users" ? "active" : "")">
                     <i class="fas fa-users"></i>
-                    <span>Users</span>
+                    <span>Пользователи</span>
                 </a>
                 <a asp-controller="Admin" asp-action="Workouts" class="nav-item @(c == "Admin" && a == "Workouts" ? "active" : "")">
                     <i class="fas fa-list"></i>
-                    <span>All Workouts</span>
+                    <span>Все занятия</span>
                 </a>
                 <a asp-controller="Account" asp-action="Profile" class="nav-item @(c == "Account" && a == "Profile" ? "active" : "")">
                     <i class="fas fa-user-shield"></i>
-                    <span>Profile</span>
+                    <span>Профиль</span>
                 </a>
             }
             else
@@ -99,14 +99,14 @@
                 {
                     <a asp-controller="Coach" asp-action="Index" class="nav-item @(c == "Coach" && a == "Index" ? "active" : "")">
                         <i class="fas fa-th-large"></i>
-                        <span>Dashboard</span>
+                        <span>Главная</span>
                     </a>
                 }
                 else
                 {
                     <a asp-controller="Home" asp-action="Index" class="nav-item @(c == "Home" && a == "Index" ? "active" : "")">
                         <i class="fas fa-calendar-alt"></i>
-                        <span>Schedule</span>
+                        <span>Расписание</span>
                     </a>
                 }
 
@@ -114,21 +114,21 @@
                 {
                     <a asp-controller="Coach" asp-action="Students" class="nav-item @(c == "Coach" && a == "Students" ? "active" : "")">
                         <i class="fas fa-users"></i>
-                        <span>Students</span>
+                        <span>Студенты</span>
                     </a>
                 }
                 else
                 {
                     <a asp-controller="Home" asp-action="Attendance" class="nav-item @(c == "Home" && a == "Attendance" ? "active" : "")">
                         <i class="fas fa-qrcode"></i>
-                        <span>Access</span>
+                        <span>Доступ</span>
                     </a>
                 }
 
                 @if (isCoach)
                 {
                     <div class="nav-item-center">
-                        <a asp-controller="Coach" asp-action="Create" class="text-decoration-none">
+                        <a asp-controller="Coach" asp-action="Create" class="text-decoration-none" title="Создать тренировку">
                             <div class="plus-btn"><i class="fas fa-plus"></i></div>
                         </a>
                     </div>
@@ -138,20 +138,20 @@
                 {
                     <a asp-controller="Coach" asp-action="AllWorkouts" class="nav-item @(c == "Coach" && a == "AllWorkouts" ? "active" : "")">
                         <i class="fas fa-dumbbell"></i>
-                        <span>Gym Workouts</span>
+                        <span>Тренировки</span>
                     </a>
                 }
                 else
                 {
                     <a asp-controller="Home" asp-action="MyWorkouts" class="nav-item @(c == "Home" && a == "MyWorkouts" ? "active" : "")">
                         <i class="fas fa-dumbbell"></i>
-                        <span>My Workouts</span>
+                        <span>Мои записи</span>
                     </a>
                 }
 
                 <a asp-controller="Account" asp-action="Profile" class="nav-item @(c == "Account" && a == "Profile" ? "active" : "")">
                     <i class="fas fa-user"></i>
-                    <span>Profile</span>
+                    <span>Профиль</span>
                 </a>
             }
         </nav>

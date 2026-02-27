@@ -10,8 +10,8 @@
             <i class="fas fa-chevron-left fa-lg"></i>
         </a>
         <div>
-            <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 24px;">Attendance</h4>
-            <small style="color: var(--text-secondary);">Class: @Model.Title</small>
+            <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 24px;">Посещаемость</h4>
+            <small style="color: var(--text-secondary);">Тренировка: @Model.Title</small>
         </div>
     </div>
     <div style="color: var(--text-main);">
@@ -20,10 +20,10 @@
 </div>
 
 <div class="mb-4 text-center p-4" style="background-color: var(--bg-card); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
-    <h2 class="fw-bold mb-0" style="color: var(--text-main);">@Model.Enrollments.Count <small class="fw-normal" style="color: var(--text-secondary); font-size: 16px;">Students Registered</small></h2>
+    <h2 class="fw-bold mb-0" style="color: var(--text-main);">@Model.Enrollments.Count <small class="fw-normal" style="color: var(--text-secondary); font-size: 16px;">записанных студентов</small></h2>
 
     <button class="btn w-100 fw-bold mt-3" style="background-color: #FFF3E0; color: var(--primary-orange); border-radius: 12px; padding: 12px; border: none;">
-        <i class="fas fa-bell me-2"></i> Notify All Students
+        <i class="fas fa-bell me-2"></i> Уведомить всех студентов
     </button>
 </div>
 
@@ -62,11 +62,11 @@
                     <div class="d-flex align-items-center mt-1">
                         @if (item.IsPresent)
                         {
-                            <small class="text-success fw-bold me-2"><i class="fas fa-check-circle"></i> Present</small>
+                            <small class="text-success fw-bold me-2"><i class="fas fa-check-circle"></i> Присутствует</small>
                         }
                         else
                         {
-                            <small class="me-2" style="color: var(--text-secondary);">Not marked yet</small>
+                            <small class="me-2" style="color: var(--text-secondary);">Еще не отмечен</small>
                         }
 
                         <a asp-action="SendMessage" asp-route-studentId="@item.StudentId" class="text-decoration-none ms-2" style="color: var(--primary-orange);" title="Написать сообщение">
@@ -98,12 +98,12 @@
 
 <div class="mt-5 pt-4" style="border-top: 1px solid var(--border-light);">
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn w-100 mb-3 fw-bold py-3" style="background-color: var(--bg-card); color: var(--primary-orange); border: 2px solid var(--primary-orange); border-radius: 16px;">
-        <i class="fas fa-edit me-2"></i> Edit Class Details
+        <i class="fas fa-edit me-2"></i> Редактировать параметры
     </a>
 
     <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Вы уверены? Это удалит тренировку и все записи.');">
         <button type="submit" class="btn w-100 fw-bold py-3" style="background-color: #FFF0F0; color: #D32F2F; border: none; border-radius: 16px;">
-            <i class="fas fa-trash me-2"></i> Delete This Class
+            <i class="fas fa-trash me-2"></i> Отменить тренировку
         </button>
     </form>
 </div>

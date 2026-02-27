@@ -11,10 +11,10 @@ body {
     background-color: var(--bg-main);
     color: var(--text-main);
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin-bottom: 70px; /* Для мобилок */
+    margin-bottom: 70px;
 }
 
-/* Стили карточек */
+
 .auth-card {
     background-color: var(--bg-card);
     border-radius: 20px;
