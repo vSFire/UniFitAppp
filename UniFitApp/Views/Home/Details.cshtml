@@ -1,7 +1,7 @@
 ﻿@model UniFitApp.Models.Workout
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Детали тренировки";
     string currentUserId = ViewBag.CurrentUserId as string;
     bool isBooked = Model.Enrollments.Any(e => e.StudentId == currentUserId);
     int spotsLeft = Model.Capacity - Model.Enrollments.Count;
@@ -27,7 +27,7 @@
         <a asp-action="Index" class="text-decoration-none me-3" style="color: var(--text-main);">
             <i class="fas fa-arrow-left fa-lg"></i>
         </a>
-        <h4 class="fw-bold mb-0" style="color: var(--text-main);">Class Details</h4>
+        <h4 class="fw-bold mb-0" style="color: var(--text-main);">Детали тренировки</h4>
     </div>
 
     @if (!string.IsNullOrEmpty(videoId))
@@ -44,7 +44,7 @@
              style="height: 200px; background-color: #EBEBEB; color: var(--text-secondary); border: 1px dashed var(--border-light);">
             <div class="text-center">
                 <i class="fas fa-video-slash fa-2x mb-2" style="opacity: 0.5;"></i>
-                <p class="small mb-0 fw-bold">No preview video available</p>
+                <p class="small mb-0 fw-bold">Видео недоступно</p>
             </div>
         </div>
     }
@@ -55,7 +55,7 @@
             <h2 class="fw-bold mb-1" style="color: var(--text-main);">@Model.Title</h2>
 
             <p class="mb-4" style="line-height: 1.6; color: var(--text-secondary);">
-                @(string.IsNullOrEmpty(Model.Description) ? "No description provided by the coach." : Model.Description)
+                @(string.IsNullOrEmpty(Model.Description) ? "Тренер не добавил описание для этого занятия." : Model.Description)
             </p>
 
             @if (!string.IsNullOrEmpty(videoId))
@@ -105,7 +105,9 @@
                                     bool isSessionBooked = session.Enrollments.Any(e => e.StudentId == currentUserId);
                                     bool isSessionFull = (session.Capacity - session.Enrollments.Count) <= 0;
 
-                                    string btnStyle = session.Id == Model.Id ? "background-color: #FFF3E0; color: var(--primary-orange); border: 1px solid var(--primary-orange); font-weight: bold;" : "background-color: #F0F0F0; color: var(--text-main); border: 1px solid transparent; font-weight: 500;";
+                                    string btnStyle = session.Id == Model.Id ?
+                                                                    "background-color: #FFF3E0; color: var(--primary-orange); border: 1px solid var(--primary-orange); font-weight: bold;"
+                                    : "background-color: #F0F0F0; color: var(--text-main); border: 1px solid transparent; font-weight: 500;";
 
                                     if (isSessionBooked && session.Id != Model.Id) btnStyle = "background-color: #FFF3E0; color: var(--primary-orange); opacity: 0.7; border: none; font-weight: bold;";
                                     else if (isSessionFull && session.Id != Model.Id) btnStyle = "background-color: #F0F0F0; color: #A0A0A0; opacity: 0.5; border: none; pointer-events: none;";
@@ -130,11 +132,9 @@
 
             <hr style="border-color: var(--border-light); opacity: 1;">
 
-            <hr style="border-color: var(--border-light); opacity: 1;">
-
             <div class="row g-3 mb-2">
                 <div class="col-6">
-                    <small class="d-block mb-2" style="color: var(--text-secondary);">Coach</small>
+                    <small class="d-block mb-2" style="color: var(--text-secondary);">Тренер</small>
                     @if (Model.Coach != null)
                     {
                         <a asp-action="CoachProfile" asp-route-coachId="@Model.CoachId" class="text-decoration-none d-inline-flex align-items-center px-2 py-1" style="background-color: #FFF3E0; color: var(--primary-orange); border-radius: 8px; font-weight: bold; border: 1px solid rgba(255, 94, 0, 0.2);">
@@ -146,21 +146,21 @@
                     else
                     {
                         <span class="fw-bold" style="color: var(--text-main);">
-                            <i class="fas fa-user me-1" style="color: var(--primary-orange);"></i> Unknown
+                            <i class="fas fa-user me-1" style="color: var(--primary-orange);"></i> Неизвестен
                         </span>
                     }
                 </div>
                 <div class="col-6">
-                    <small class="d-block mb-1" style="color: var(--text-secondary);">Location</small>
+                    <small class="d-block mb-1" style="color: var(--text-secondary);">Локация</small>
                     <span class="fw-bold" style="color: var(--text-main);"><i class="fas fa-map-pin me-1" style="color: var(--primary-orange);"></i> @Model.Location</span>
                 </div>
                 <div class="col-6">
-                    <small class="d-block mb-1" style="color: var(--text-secondary);">Spots Left</small>
+                    <small class="d-block mb-1" style="color: var(--text-secondary);">Осталось мест</small>
                     <span class="fw-bold @(spotsLeft > 0 ? "text-success" : "text-danger")">@spotsLeft / @Model.Capacity</span>
                 </div>
                 <div class="col-6">
-                    <small class="d-block mb-1" style="color: var(--text-secondary);">Duration</small>
-                    <span class="fw-bold" style="color: var(--text-main);">60 min</span>
+                    <small class="d-block mb-1" style="color: var(--text-secondary);">Длительность</small>
+                    <span class="fw-bold" style="color: var(--text-main);">60 мин</span>
                 </div>
             </div>
 
