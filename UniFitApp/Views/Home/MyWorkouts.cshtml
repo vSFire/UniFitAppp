@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<UniFitApp.Models.Enrollment>
 
 @{
-    ViewData["Title"] = "Мои тренировки";
+    ViewData["Title"] = "Мои записи";
     var upcoming = Model.Where(e => e.Workout.StartTime > DateTime.UtcNow).ToList();
     var history = Model.Where(e => e.Workout.StartTime <= DateTime.UtcNow).ToList();
 }
 
 <div class="d-flex align-items-center mb-4">
-    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">My Workouts</h4>
+    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Мои записи</h4>
 </div>
 
 <style>
@@ -28,10 +28,10 @@
 
 <ul class="nav nav-pills mb-4 nav-justified" style="background: #EBEBEB; border-radius: 12px; padding: 5px;">
     <li class="nav-item">
-        <a class="nav-link active rounded-3 fw-bold" data-bs-toggle="pill" href="#upcoming">Upcoming</a>
+        <a class="nav-link active rounded-3 fw-bold" data-bs-toggle="pill" href="#upcoming">Предстоящие</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link rounded-3 fw-bold" data-bs-toggle="pill" href="#history">History</a>
+        <a class="nav-link rounded-3 fw-bold" data-bs-toggle="pill" href="#history">История</a>
     </li>
 </ul>
 
@@ -70,7 +70,7 @@
                             <div class="ms-3">
                                 <form asp-action="CancelBooking" asp-route-workoutId="@item.Workout.Id" method="post" onsubmit="return confirm('Отменить запись?');">
                                     <button type="submit" class="btn btn-sm fw-bold" style="background-color: #FFF0F0; color: #D32F2F; border-radius: 10px; border: none;">
-                                        <i class="fas fa-times"></i> Cancel
+                                        <i class="fas fa-times"></i> Отменить
                                     </button>
                                 </form>
                             </div>
@@ -100,7 +100,7 @@
                                 <h6 class="fw-bold mb-1" style="color: var(--text-main);">@item.Workout.Title</h6>
                                 <small style="color: var(--text-secondary);">@item.Workout.StartTime.ToLocalTime().ToString("d MMMM yyyy")</small>
                             </div>
-                            <span class="badge fw-normal" style="background-color: #EBEBEB; color: var(--text-secondary);">Completed</span>
+                            <span class="badge fw-normal" style="background-color: #EBEBEB; color: var(--text-secondary);">Завершено</span>
                         </div>
                     </div>
                 </a>

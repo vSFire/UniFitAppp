@@ -5,7 +5,7 @@
 }
 
 <div class="d-flex align-items-center mb-4">
-    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Member Pass</h4>
+    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Мой пропуск</h4>
 </div>
 
 <div class="row justify-content-center mt-3">
@@ -16,7 +16,7 @@
 
                 <div class="mb-3" style="color: var(--primary-orange);">
                     <i class="fas fa-dumbbell fa-2x"></i>
-                    <div class="small fw-bold" style="letter-spacing: 2px;">UNIFIT ACCESS</div>
+                    <div class="small fw-bold" style="letter-spacing: 2px;">ДОСТУП UNIFIT</div>
                 </div>
 
                 <div class="mb-3">
@@ -28,14 +28,14 @@
                 <h3 class="fw-bold mb-0" style="color: var(--text-main);">@Model.FirstName @Model.LastName</h3>
                 <p class="small mb-3" style="color: var(--text-secondary);">@Model.Email</p>
 
-                <span class="badge px-3 py-2 rounded-pill mb-4" style="background-color: #E8F5E9; color: #198754; font-weight: bold;">ACTIVE MEMBER</span>
+                <span class="badge px-3 py-2 rounded-pill mb-4" style="background-color: #E8F5E9; color: #198754; font-weight: bold;">АКТИВНЫЙ СТАТУС</span>
 
                 <div class="p-3 rounded mb-3 mx-auto shadow-sm" style="width: fit-content; border: 1px solid var(--border-light); background-color: white;">
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=@Model.Email" alt="QR Code" style="width: 150px; height: 150px;" />
                 </div>
 
                 <p class="small" style="color: var(--text-secondary); line-height: 1.4;">
-                    Scan this code at the gym entrance terminal.<br>
+                    Отсканируйте этот код на терминале при входе в зал.<br>
                     ID: <span class="fw-bold text-dark">@Model.Id.Substring(0, 8).ToUpper()</span>
                 </p>
 
@@ -46,13 +46,13 @@
             <div class="col-6">
                 <div class="p-3 rounded text-center" style="background-color: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
                     <h2 class="fw-bold mb-0" style="color: var(--text-main);">12</h2>
-                    <small class="fw-bold text-uppercase" style="font-size: 10px; color: var(--text-secondary);">Visits this month</small>
+                    <small class="fw-bold text-uppercase" style="font-size: 10px; color: var(--text-secondary);">Визитов за месяц</small>
                 </div>
             </div>
             <div class="col-6">
                 <div class="p-3 rounded text-center" style="background-color: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
                     <h2 class="fw-bold mb-0" style="color: var(--text-main);">98%</h2>
-                    <small class="fw-bold text-uppercase" style="font-size: 10px; color: var(--text-secondary);">Attendance Rate</small>
+                    <small class="fw-bold text-uppercase" style="font-size: 10px; color: var(--text-secondary);">Успеваемость</small>
                 </div>
             </div>
         </div>
