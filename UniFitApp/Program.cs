@@ -46,7 +46,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Оставляем только один вызов здесь
+// === ГЛОБАЛЬНАЯ ЛОКАЛИЗАЦИЯ (РУССКИЕ ДАТЫ) ===
+var supportedCultures = new[] { "ru-RU" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
 
+app.UseRequestLocalization(localizationOptions);
+// =============================================
 app.UseRouting();
 
 app.UseAuthentication(); // Проверка кто это
