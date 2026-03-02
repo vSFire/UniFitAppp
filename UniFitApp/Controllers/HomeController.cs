@@ -19,7 +19,7 @@ namespace UniFitApp.Controllers
             _userManager = userManager;
         }
 
-        // 1. РАСПИСАНИЕ (С ГРУППИРОВКОЙ ДЛЯ НОВОГО ДИЗАЙНА)
+        // 1. Р РђРЎРџРРЎРђРќРР• (РЎ Р“Р РЈРџРџРР РћР’РљРћР™ Р”Р›РЇ РќРћР’РћР“Рћ Р”РР—РђР™РќРђ)
         public async Task<IActionResult> Index(
             DateTime? date,
             bool showBookedOnly = false,
@@ -47,7 +47,7 @@ namespace UniFitApp.Controllers
             }
             else
             {
-                // Показываем тренировки на выбранную дату
+                // РџРѕРєР°Р·С‹РІР°РµРј С‚СЂРµРЅРёСЂРѕРІРєРё РЅР° РІС‹Р±СЂР°РЅРЅСѓСЋ РґР°С‚Сѓ
                 query = query.Where(w => w.StartTime >= selectedDate && w.StartTime < selectedDate.AddDays(1));
             }
 
@@ -61,10 +61,10 @@ namespace UniFitApp.Controllers
                 query = query.Where(w => w.Type == workoutType);
             }
 
-            // Выгружаем в память для работы с локальным временем
+            // Р’С‹РіСЂСѓР¶Р°РµРј РІ РїР°РјСЏС‚СЊ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Р»РѕРєР°Р»СЊРЅС‹Рј РІСЂРµРјРµРЅРµРј
             var rawWorkouts = await query.ToListAsync();
 
-            // Применяем фильтр по времени суток УЖЕ в локальном времени
+            // РџСЂРёРјРµРЅСЏРµРј С„РёР»СЊС‚СЂ РїРѕ РІСЂРµРјРµРЅРё СЃСѓС‚РѕРє РЈР–Р• РІ Р»РѕРєР°Р»СЊРЅРѕРј РІСЂРµРјРµРЅРё
             if (!string.IsNullOrEmpty(timeOfDay) && timeOfDay != "All")
             {
                 rawWorkouts = rawWorkouts.Where(w =>
@@ -94,7 +94,7 @@ namespace UniFitApp.Controllers
             return View(groupedWorkouts);
         }
 
-        // === МЕТОД: ДЕТАЛИ ТРЕНИРОВКИ (С БУДУЩИМИ СЕАНСАМИ) ===
+        // === РњР•РўРћР”: Р”Р•РўРђР›Р РўР Р•РќРР РћР’РљР (РЎ Р‘РЈР”РЈР©РРњР РЎР•РђРќРЎРђРњР) ===
         public async Task<IActionResult> Details(int id)
         {
             var workout = await _context.Workouts
@@ -107,7 +107,7 @@ namespace UniFitApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             ViewBag.CurrentUserId = user.Id;
 
-            // Загружаем все БУДУЩИЕ сеансы тренировки с таким же названием (для нового дизайна)
+            // Р—Р°РіСЂСѓР¶Р°РµРј РІСЃРµ Р‘РЈР”РЈР©РР• СЃРµР°РЅСЃС‹ С‚СЂРµРЅРёСЂРѕРІРєРё СЃ С‚Р°РєРёРј Р¶Рµ РЅР°Р·РІР°РЅРёРµРј (РґР»СЏ РЅРѕРІРѕРіРѕ РґРёР·Р°Р№РЅР°)
             var futureSessions = await _context.Workouts
                 .Include(w => w.Enrollments)
                 .Where(w => w.Title == workout.Title && w.StartTime > DateTime.UtcNow)
@@ -149,18 +149,19 @@ namespace UniFitApp.Controllers
                 _context.Notifications.Add(new Notification
                 {
                     UserId = user.Id,
-                    Message = $"Вы отменили запись на тренировку '{workout.Title}' ({workout.StartTime.ToLocalTime():dd.MM}).",
+                    Message = $"Р’С‹ РѕС‚РјРµРЅРёР»Рё Р·Р°РїРёСЃСЊ РЅР° С‚СЂРµРЅРёСЂРѕРІРєСѓ '{workout.Title}' ({workout.StartTime.ToLocalTime():dd.MM}).",
                     CreatedAt = DateTime.UtcNow
                 });
 
                 _context.Enrollments.Remove(existing);
-                TempData["Info"] = "Вы отменили запись.";
+
+                TempData["Info"] = "Р’С‹ РѕС‚РјРµРЅРёР»Рё Р·Р°РїРёСЃСЊ.";
             }
             else
             {
                 if (workout.Enrollments.Count >= workout.Capacity)
                 {
-                    TempData["Error"] = "Извините, мест больше нет!";
+                    TempData["Error"] = "РР·РІРёРЅРёС‚Рµ, РјРµСЃС‚ Р±РѕР»СЊС€Рµ РЅРµС‚!";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -169,11 +170,11 @@ namespace UniFitApp.Controllers
                 _context.Notifications.Add(new Notification
                 {
                     UserId = user.Id,
-                    Message = $"Успешно! Вы записаны на '{workout.Title}' в {workout.StartTime.ToLocalTime():HH:mm}.",
+                    Message = $"РЈСЃРїРµС€РЅРѕ! Р’С‹ Р·Р°РїРёСЃР°РЅС‹ РЅР° '{workout.Title}' РІ {workout.StartTime.ToLocalTime():HH:mm}.",
                     CreatedAt = DateTime.UtcNow
                 });
 
-                TempData["Success"] = "Вы успешно записаны!";
+                TempData["Success"] = "Р’С‹ СѓСЃРїРµС€РЅРѕ Р·Р°РїРёСЃР°РЅС‹!";
             }
 
             await _context.SaveChangesAsync();
@@ -212,8 +213,8 @@ namespace UniFitApp.Controllers
         }
     }
 
-    // === ВСПОМОГАТЕЛЬНЫЙ КЛАСС ДЛЯ ГРУППИРОВКИ ===
-    // Добавь его прямо в конец файла HomeController.cs
+    // === Р’РЎРџРћРњРћР“РђРўР•Р›Р¬РќР«Р™ РљР›РђРЎРЎ Р”Р›РЇ Р“Р РЈРџРџРР РћР’РљР ===
+    // Р”РѕР±Р°РІСЊ РµРіРѕ РїСЂСЏРјРѕ РІ РєРѕРЅРµС† С„Р°Р№Р»Р° HomeController.cs
     public class WorkoutGroupViewModel
     {
         public string Title { get; set; }
