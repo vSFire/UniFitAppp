@@ -89,9 +89,9 @@
            asp-route-showBookedOnly="false"
            class="text-decoration-none text-center p-2 flex-fill"
            style="min-width: 65px; border-radius: 16px; transition: 0.3s;
-                      background-color: @(isActive ? "var(--bg-card)" : "transparent");
-                      border: @(isActive ? "2px solid var(--primary-orange)" : "1px solid transparent");
-                      box-shadow: @(isActive ? "0 4px 10px rgba(0,0,0,0.05)" : "none");">
+                          background-color: @(isActive ? "var(--bg-card)" : "transparent");
+                          border: @(isActive ? "2px solid var(--primary-orange)" : "1px solid transparent");
+                          box-shadow: @(isActive ? "0 4px 10px rgba(0,0,0,0.05)" : "none");">
             <div class="small fw-bold text-uppercase" style="color: @(isActive ? "var(--primary-orange)" : "var(--text-secondary)");">@day.ToString("ddd")</div>
             <div class="fs-4 fw-bold" style="color: @(isActive ? "var(--text-main)" : "var(--text-secondary)");">@day.Day</div>
         </a>

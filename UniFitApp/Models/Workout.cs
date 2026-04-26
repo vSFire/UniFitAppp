@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace UniFitApp.Models
 {
@@ -20,13 +21,16 @@ namespace UniFitApp.Models
         [Required(ErrorMessage = "Дата обязательна")]
         public DateTime StartTime { get; set; }
 
-      
-       
+        // === ПОЛЯ ДЛЯ КАРТИНКИ ===
+        public string? ImageUrl { get; set; }
+
+        [NotMapped] // Это поле не будет создаваться в базе данных
+        public IFormFile? ImageFile { get; set; }
 
         [Range(1, 100, ErrorMessage = "Вместимость от 1 до 100")]
         public int Capacity { get; set; }
 
-        // === ПОЛЕ ДЛЯ ВИДЕОГИДА (Добавлено по новому дизайну) ===
+        // === ПОЛЕ ДЛЯ ВИДЕОГИДА ===
         public string? VideoUrl { get; set; }
 
         public string CoachId { get; set; }

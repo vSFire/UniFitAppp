@@ -1,11 +1,16 @@
 ﻿@charset "UTF-8";
+
 :root {
-    --primary-orange: #FF5E00;
-    --bg-main: #F7F7F7;
-    --bg-card: #FFFFFF;
-    --text-main: #111111;
-    --text-secondary: #6B6B6B;
-    --border-light: #EBEBEB;
+    /* ТВОЯ НОВАЯ ПРЕМИАЛЬНАЯ ПАЛИТРА */
+    --accent-dark: #51654A; /* Тёмный хаки - акценты, кнопки, hover */
+    --accent-light: #6E7E5E; /* Светлый хаки - активные элементы, карточки */
+    --bg-main: #F5F5F5; /* Основной фон (Белый/Светло-серый) */
+    --bg-card: #FFFFFF; /* Фон карточек (Чисто белый для глубины) */
+    --text-main: #212121; /* Очень тёмный серо-чёрный - заголовки, навбары */
+    --text-secondary: #6E6E6E; /* Средний серый - второстепенный текст */
+    --border-light: #EBEBEB; /* Легкие границы */
+    /* ХИТРОСТЬ: Оставляем старое название переменной, чтобы другие файлы не сломались, но цвет теперь ХАКИ */
+    --primary-orange: #51654A;
 }
 
 body {
@@ -15,12 +20,11 @@ body {
     margin-bottom: 70px;
 }
 
-
 .auth-card {
     background-color: var(--bg-card);
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.03);
     border: 1px solid var(--border-light);
 }
 
@@ -30,37 +34,46 @@ body {
     color: var(--text-main);
     border-radius: 12px;
     padding: 12px;
+    transition: all 0.3s ease;
 }
 
     .form-control:focus {
         background-color: var(--bg-card);
-        border-color: var(--primary-orange);
+        border-color: var(--accent-light);
         color: var(--text-main);
-        box-shadow: 0 0 0 0.2rem rgba(255, 94, 0, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(110, 126, 94, 0.15);
     }
 
 .btn-primary {
-    background-color: var(--primary-orange);
+    background-color: var(--accent-dark);
     border: none;
     border-radius: 12px;
     padding: 12px;
     font-weight: bold;
-    color: white;
+    color: #F5F5F5;
+    transition: all 0.3s ease;
 }
 
-/* ---           (                   ) --- */
+    .btn-primary:hover {
+        background-color: var(--accent-light);
+        color: #FFFFFF;
+        transform: translateY(-2px);
+    }
+
+/* --- ТЕМНАЯ НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ --- */
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 70px;
-    background-color: var(--bg-card);
+    background-color: var(--text-main);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top: 1px solid var(--border-light);
+    border-top: none;
     z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
 }
 
 .nav-item {
@@ -71,6 +84,7 @@ body {
     align-items: center;
     font-size: 10px;
     transition: all 0.3s;
+    font-weight: 500;
 }
 
     .nav-item i {
@@ -79,7 +93,7 @@ body {
     }
 
     .nav-item.active, .nav-item:hover {
-        color: var(--primary-orange);
+        color: var(--accent-light);
     }
 
 .nav-item-center {
@@ -90,22 +104,28 @@ body {
 .plus-btn {
     width: 55px;
     height: 55px;
-    background-color: var(--primary-orange);
+    background-color: var(--accent-light);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #F5F5F5;
     font-size: 24px;
-    box-shadow: 0 4px 10px rgba(255, 94, 0, 0.3);
-    border: 4px solid var(--bg-main);
+    box-shadow: 0 4px 15px rgba(33, 33, 33, 0.4);
+    border: 4px solid var(--text-main);
+    transition: all 0.3s ease;
 }
 
-/* ---                       (DESKTOP) --- */
+    .plus-btn:hover {
+        background-color: var(--accent-dark);
+        transform: scale(1.05);
+    }
+
+/* --- ДЕСКТОП --- */
 @media (min-width: 992px) {
     body {
         margin-bottom: 0;
-        padding-left: 260px; /*                           */
+        padding-left: 260px;
     }
 
     .navbar {
@@ -115,7 +135,7 @@ body {
         top: 0;
         z-index: 1001;
         background-color: var(--bg-card) !important;
-        border-bottom: 1px solid var(--border-light);
+        border-bottom: 1px solid var(--border-light) !important;
     }
 
     main {
@@ -129,10 +149,11 @@ body {
         top: 0;
         flex-direction: column;
         justify-content: flex-start;
-        padding: 80px 15px 20px 15px;
+        /* УМЕНЬШИЛИ PADDING СВЕРХУ, ЧТОБЫ ВЛЕЗ ЛОГОТИП */
+        padding: 30px 15px 20px 15px;
         border-top: none;
-        border-right: 1px solid var(--border-light);
-        background-color: var(--bg-card);
+        border-right: none;
+        background-color: var(--text-main);
     }
 
     .nav-item {
@@ -158,7 +179,8 @@ body {
         }
 
         .nav-item.active {
-            background-color: rgba(255, 94, 0, 0.1);
+            background-color: rgba(110, 126, 94, 0.15);
+            color: var(--accent-light);
         }
 
     .nav-item-center {
@@ -175,10 +197,11 @@ body {
         font-size: 16px;
         gap: 10px;
         box-shadow: none;
+        background-color: var(--accent-dark);
     }
 
         .plus-btn::after {
-            content: "                  ";
+            content: "Создать тренировку";
             font-weight: bold;
         }
 }

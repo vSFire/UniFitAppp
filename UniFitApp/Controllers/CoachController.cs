@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UniFitApp.Data;
 using UniFitApp.Models;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace UniFitApp.Controllers
 {
@@ -13,11 +18,13 @@ namespace UniFitApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public CoachController(ApplicationDbContext context, UserManager<AppUser> userManager)
+        public CoachController(ApplicationDbContext context, UserManager<AppUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // 1. ДАШБОРД ТРЕНЕРА
@@ -31,15 +38,13 @@ namespace UniFitApp.Controllers
                 : DateTime.UtcNow.Date;
 
             ViewBag.SelectedDate = selectedDate;
-            ViewBag.ShowAll = showAll; // Передаем флаг в View
+            ViewBag.ShowAll = showAll;
 
-            // Базовый запрос
             var query = _context.Workouts
                 .Include(w => w.Enrollments)
                 .Include(w => w.Coach)
                 .Where(w => w.StartTime >= selectedDate && w.StartTime < selectedDate.AddDays(1));
 
-            // ФИЛЬТР: Если НЕ "Show All", то показываем только свои
             if (!showAll)
             {
                 query = query.Where(w => w.CoachId == user.Id);
@@ -67,9 +72,26 @@ namespace UniFitApp.Controllers
 
             ModelState.Remove("Coach");
             ModelState.Remove("CoachId");
+            ModelState.Remove("ImageFile"); // Игнорируем валидацию файла
 
             if (ModelState.IsValid)
             {
+                // ЛОГИКА СОХРАНЕНИЯ КАРТИНКИ
+                if (workout.ImageFile != null)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "workouts");
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + workout.ImageFile.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await workout.ImageFile.CopyToAsync(fileStream);
+                    }
+                    workout.ImageUrl = "/images/workouts/" + uniqueFileName;
+                }
+
                 _context.Add(workout);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,7 +124,7 @@ namespace UniFitApp.Controllers
             return RedirectToAction("Details", new { id = enrollment.WorkoutId });
         }
 
-        // УДАЛЕНИЕ СТУДЕНТА (С УВЕДОМЛЕНИЕМ)
+        // УДАЛЕНИЕ СТУДЕНТА
         [HttpPost]
         public async Task<IActionResult> RemoveStudent(int workoutId, string studentId)
         {
@@ -112,7 +134,6 @@ namespace UniFitApp.Controllers
 
             if (enrollment != null)
             {
-                // Уведомляем студента (История)
                 var notif = new Notification
                 {
                     UserId = studentId,
@@ -132,12 +153,11 @@ namespace UniFitApp.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var workout = await _context.Workouts
-                .Include(w => w.Enrollments) // Подгружаем, чтобы уведомить
+                .Include(w => w.Enrollments)
                 .FirstOrDefaultAsync(w => w.Id == id);
 
             if (workout != null)
             {
-                // Уведомляем всех записанных перед удалением
                 foreach (var e in workout.Enrollments)
                 {
                     _context.Notifications.Add(new Notification
@@ -154,7 +174,7 @@ namespace UniFitApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Все тренировки (Gym Workouts) - С ФИЛЬТРАЦИЕЙ
+        // Все тренировки
         public async Task<IActionResult> AllWorkouts(bool showAll = true)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -164,7 +184,6 @@ namespace UniFitApp.Controllers
                 .Include(w => w.Enrollments)
                 .AsQueryable();
 
-            // Если showAll = false, показываем только мои
             if (!showAll)
             {
                 query = query.Where(w => w.CoachId == user.Id);
@@ -172,7 +191,7 @@ namespace UniFitApp.Controllers
 
             var allWorkouts = await query.OrderBy(w => w.StartTime).ToListAsync();
 
-            ViewBag.ShowAll = showAll; // Передаем флаг в представление
+            ViewBag.ShowAll = showAll;
             return View(allWorkouts);
         }
 
@@ -180,10 +199,8 @@ namespace UniFitApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Students()
         {
-            // Берем студентов, которые записаны к этому тренеру
             var user = await _userManager.GetUserAsync(User);
 
-            // Находим ID студентов через таблицу записей
             var studentIds = await _context.Enrollments
                 .Include(e => e.Workout)
                 .Where(e => e.Workout.CoachId == user.Id)
@@ -191,7 +208,6 @@ namespace UniFitApp.Controllers
                 .Distinct()
                 .ToListAsync();
 
-            // Загружаем самих пользователей
             var students = await _userManager.Users
                 .Where(u => studentIds.Contains(u.Id))
                 .ToListAsync();
@@ -208,7 +224,7 @@ namespace UniFitApp.Controllers
             return View(workout);
         }
 
-        // РЕДАКТИРОВАНИЕ (POST) - С УВЕДОМЛЕНИЯМИ
+        // РЕДАКТИРОВАНИЕ (POST)
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Workout workout)
         {
@@ -220,14 +236,33 @@ namespace UniFitApp.Controllers
             workout.CoachId = originalWorkout.CoachId;
             workout.StartTime = DateTime.SpecifyKind(workout.StartTime, DateTimeKind.Utc);
 
+            // Если новую картинку не загрузили, сохраняем старую
+            workout.ImageUrl = originalWorkout.ImageUrl;
+
             ModelState.Remove("Coach");
             ModelState.Remove("CoachId");
+            ModelState.Remove("ImageFile");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // --- БЛОК УВЕДОМЛЕНИЙ ---
+                    // ЛОГИКА СОХРАНЕНИЯ НОВОЙ КАРТИНКИ ПРИ РЕДАКТИРОВАНИИ
+                    if (workout.ImageFile != null)
+                    {
+                        string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "workouts");
+                        Directory.CreateDirectory(uploadsFolder);
+
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_" + workout.ImageFile.FileName;
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await workout.ImageFile.CopyToAsync(fileStream);
+                        }
+                        workout.ImageUrl = "/images/workouts/" + uniqueFileName;
+                    }
+
                     var enrollments = await _context.Enrollments
                         .Where(e => e.WorkoutId == workout.Id)
                         .Include(e => e.Student)
@@ -243,7 +278,6 @@ namespace UniFitApp.Controllers
                         };
                         _context.Notifications.Add(notif);
                     }
-                    // -------------------------
 
                     _context.Update(workout);
                     await _context.SaveChangesAsync();

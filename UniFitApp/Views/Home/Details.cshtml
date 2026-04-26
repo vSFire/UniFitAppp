@@ -23,55 +23,50 @@
 
 <div class="container pb-5">
 
-    <div class="d-flex align-items-center mb-4">
-        <a asp-action="Index" class="text-decoration-none me-3" style="color: var(--text-main);">
-            <i class="fas fa-arrow-left fa-lg"></i>
+    <div class="d-flex align-items-center mb-4 mt-2">
+        <a asp-action="Index" class="text-decoration-none me-3 shadow-sm" style="color: var(--text-main); background: #ffffff; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+            <i class="fas fa-arrow-left"></i>
         </a>
         <h4 class="fw-bold mb-0" style="color: var(--text-main);">Детали тренировки</h4>
     </div>
 
-    @if (!string.IsNullOrEmpty(videoId))
-    {
-        <div class="ratio ratio-16x9 mb-4 rounded overflow-hidden shadow-sm border-0 d-none d-md-block">
-            <iframe src="https://www.youtube.com/embed/@videoId?rel=0"
-                    title="YouTube video"
-                    allowfullscreen></iframe>
-        </div>
-    }
-    else
-    {
-        <div class="mb-4 rounded d-none d-md-flex align-items-center justify-content-center"
-             style="height: 200px; background-color: #EBEBEB; color: var(--text-secondary); border: 1px dashed var(--border-light);">
-            <div class="text-center">
-                <i class="fas fa-video-slash fa-2x mb-2" style="opacity: 0.5;"></i>
-                <p class="small mb-0 fw-bold">Видео недоступно</p>
-            </div>
-        </div>
-    }
+    <div class="card border-0 mb-4" style="background-color: var(--bg-card); border-radius: 24px; box-shadow: 0 4px 25px rgba(0,0,0,0.06); overflow: hidden;">
 
-    <div class="card border-0 mb-4" style="background-color: var(--bg-card); border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid var(--border-light) !important;">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div style="width: 100%; background-color: #f8f9fa; border-bottom: 1px solid var(--border-light); line-height: 0;">
+                <img src="@Model.ImageUrl" alt="@Model.Title" style="width: 100%; height: auto; max-height: 500px; object-fit: contain; display: block;" />
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(videoId))
+        {
+            <div class="ratio ratio-16x9">
+                <iframe src="https://www.youtube.com/embed/@videoId?rel=0" title="YouTube video" allowfullscreen></iframe>
+            </div>
+        }
+
         <div class="card-body p-4">
 
             <h2 class="fw-bold mb-1" style="color: var(--text-main);">@Model.Title</h2>
 
-            <p class="mb-4" style="line-height: 1.6; color: var(--text-secondary);">
-                @(string.IsNullOrEmpty(Model.Description) ? "Тренер не добавил описание для этого занятия." : Model.Description)
+            <p class="mb-4 mt-3" style="line-height: 1.6; color: var(--text-secondary); font-size: 15px;">
+                @(string.IsNullOrEmpty(Model.Description) ? "Описание отсутствует." : Model.Description)
             </p>
 
-            @if (!string.IsNullOrEmpty(videoId))
+            @if (!string.IsNullOrEmpty(Model.ImageUrl) && !string.IsNullOrEmpty(videoId))
             {
-                <button type="button" class="btn btn-sm rounded-pill mb-4 px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#videoModal" style="background-color: #FFF3E0; color: var(--primary-orange); border: none;">
-                    <i class="fas fa-play-circle me-1"></i> Посмотреть видеогид
+                <button type="button" class="btn w-100 rounded-pill mb-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#videoModal" style="background-color: #FFF3E0; color: var(--primary-orange); border: none;">
+                    <i class="fab fa-youtube me-2"></i> Смотреть видеоинструкцию
                 </button>
 
                 <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content bg-white border-0 shadow-lg">
-                            <div class="modal-header border-0 pb-0">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-content bg-transparent border-0">
+                            <div class="modal-header border-0 pb-0 justify-content-end">
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-0">
-                                <div class="ratio ratio-16x9">
+                                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-lg">
                                     <iframe src="https://www.youtube.com/embed/@videoId?rel=0" allowfullscreen></iframe>
                                 </div>
                             </div>
@@ -106,7 +101,7 @@
                                     bool isSessionFull = (session.Capacity - session.Enrollments.Count) <= 0;
 
                                     string btnStyle = session.Id == Model.Id ?
-                                                                    "background-color: #FFF3E0; color: var(--primary-orange); border: 1px solid var(--primary-orange); font-weight: bold;"
+                                                                                            "background-color: #FFF3E0; color: var(--primary-orange); border: 1px solid var(--primary-orange); font-weight: bold;"
                                     : "background-color: #F0F0F0; color: var(--text-main); border: 1px solid transparent; font-weight: 500;";
 
                                     if (isSessionBooked && session.Id != Model.Id) btnStyle = "background-color: #FFF3E0; color: var(--primary-orange); opacity: 0.7; border: none; font-weight: bold;";
@@ -124,10 +119,6 @@
                         </div>
                     }
                 }
-                else
-                {
-                    <p class="small mb-0" style="color: var(--text-secondary);">Нет других доступных сеансов.</p>
-                }
             </div>
 
             <hr style="border-color: var(--border-light); opacity: 1;">
@@ -140,24 +131,13 @@
                         <a asp-action="CoachProfile" asp-route-coachId="@Model.CoachId" class="text-decoration-none d-inline-flex align-items-center px-2 py-1" style="background-color: #FFF3E0; color: var(--primary-orange); border-radius: 8px; font-weight: bold; border: 1px solid rgba(255, 94, 0, 0.2);">
                             <i class="fas fa-user-circle me-2 fs-6"></i>
                             <span>@Model.Coach.FirstName</span>
-                            <i class="fas fa-chevron-right ms-2" style="font-size: 10px;"></i>
                         </a>
                     }
-                    else
-                    {
-                        <span class="fw-bold" style="color: var(--text-main);">
-                            <i class="fas fa-user me-1" style="color: var(--primary-orange);"></i> Неизвестен
-                        </span>
-                    }
                 </div>
-               
+
                 <div class="col-6">
                     <small class="d-block mb-1" style="color: var(--text-secondary);">Осталось мест</small>
                     <span class="fw-bold @(spotsLeft > 0 ? "text-success" : "text-danger")">@spotsLeft / @Model.Capacity</span>
-                </div>
-                <div class="col-6">
-                    <small class="d-block mb-1" style="color: var(--text-secondary);">Длительность</small>
-                    <span class="fw-bold" style="color: var(--text-main);">60 мин</span>
                 </div>
             </div>
 
