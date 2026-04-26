@@ -1,26 +1,26 @@
 ﻿@model IEnumerable<UniFitApp.Models.AppUser>
 
 @{
-    ViewData["Title"] = "Студенты";
+    ViewData["Title"] = "Пользователи";
 }
 
 <div class="d-flex align-items-center justify-content-between mb-4">
-    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Мои студенты</h4>
+    <h4 class="fw-bold mb-0" style="color: var(--text-main); font-size: 28px;">Мои пользователи</h4>
     <span class="badge" style="background-color: #FFF3E0; color: var(--primary-orange); font-size: 14px; padding: 8px 12px; border-radius: 10px;">
         @Model.Count() Всего
     </span>
 </div>
 
 <div class="mb-4">
-    <input type="text" class="form-control" placeholder="Поиск студента...." style="background-color: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-main); border-radius: 12px; padding: 12px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+    <input type="text" class="form-control" placeholder="Поиск пользователя...." style="background-color: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-main); border-radius: 12px; padding: 12px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
 </div>
 
 @if (!Model.Any())
 {
     <div class="text-center mt-5" style="color: var(--text-secondary);">
         <i class="fas fa-user-slash fa-3x mb-3" style="opacity: 0.3;"></i>
-        <p>У вас пока нет студентов.</p>
-        <small>Студенты появятся здесь, когда запишутся на ваши тренировки.</small>
+        <p>У вас пока нет пользователей.</p>
+        <small>Пользователи появятся здесь, когда запишутся на ваши тренировки.</small>
     </div>
 }
 else

@@ -66,7 +66,7 @@
     <div class="row mb-4">
         <div class="col-6">
             <div class="p-3" style="background-color: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
-                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-users me-1"></i> Студентов сегодня</small>
+                <small class="text-uppercase fw-bold" style="font-size: 10px; color: var(--text-secondary);"><i class="fas fa-users me-1"></i> Пользователей сегодня</small>
                 <h2 class="fw-bold mt-1 mb-0" style="color: var(--text-main);">@totalStudents</h2>
             </div>
         </div>
@@ -115,7 +115,7 @@ else
                     @if (isMyClass)
                     {
                         <small class="fw-bold" style="font-size: 11px; color: var(--primary-orange);">
-                            @count / @cap Студентов
+                            @count / @cap Пользователей
                         </small>
                     }
                     else
@@ -136,7 +136,7 @@ else
                     @if (isMyClass)
                     {
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm flex-grow-1 fw-bold" style="background-color: #FFF3E0; color: var(--primary-orange); border: none; border-radius: 8px;">
-                            <i class="fas fa-users me-2"></i> Список студентов
+                            <i class="fas fa-users me-2"></i> Список пользователей
                         </a>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm fw-bold" style="background-color: #F0F0F0; color: var(--text-main); border: none; border-radius: 8px;" title="Edit Class">
                             <i class="fas fa-edit"></i>

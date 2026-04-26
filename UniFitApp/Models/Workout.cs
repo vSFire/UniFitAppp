@@ -20,8 +20,8 @@ namespace UniFitApp.Models
         [Required(ErrorMessage = "Дата обязательна")]
         public DateTime StartTime { get; set; }
 
-        [Required(ErrorMessage = "Место проведения обязательно")]
-        public string Location { get; set; }
+      
+       
 
         [Range(1, 100, ErrorMessage = "Вместимость от 1 до 100")]
         public int Capacity { get; set; }

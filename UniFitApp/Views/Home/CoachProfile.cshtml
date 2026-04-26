@@ -60,9 +60,7 @@
                                 <small class="d-block mb-1" style="color: var(--text-secondary);">
                                     <i class="far fa-calendar me-1"></i> @item.StartTime.ToLocalTime().ToString("dd MMM, HH:mm")
                                 </small>
-                                <small style="color: var(--text-secondary);">
-                                    <i class="fas fa-map-marker-alt me-1"></i> @item.Location
-                                </small>
+                                
                             </div>
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm rounded-pill px-3 fw-bold" style="background-color: #F0F0F0; color: var(--text-main); border: none;">
                                 Подробнее

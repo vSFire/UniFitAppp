@@ -150,10 +150,7 @@
                         </span>
                     }
                 </div>
-                <div class="col-6">
-                    <small class="d-block mb-1" style="color: var(--text-secondary);">Локация</small>
-                    <span class="fw-bold" style="color: var(--text-main);"><i class="fas fa-map-pin me-1" style="color: var(--primary-orange);"></i> @Model.Location</span>
-                </div>
+               
                 <div class="col-6">
                     <small class="d-block mb-1" style="color: var(--text-secondary);">Осталось мест</small>
                     <span class="fw-bold @(spotsLeft > 0 ? "text-success" : "text-danger")">@spotsLeft / @Model.Capacity</span>

@@ -36,9 +36,7 @@
                             <td class="p-3 align-middle fw-bold" style="color: var(--primary-orange);">
                                 <i class="fas fa-user-tie me-1"></i> @(w.Coach?.FirstName ?? "Удален")
                             </td>
-                            <td class="p-3 align-middle" style="color: var(--text-secondary);">
-                                <i class="fas fa-map-marker-alt me-1"></i> @w.Location
-                            </td>
+                           
                             <td class="p-3 align-middle text-center fw-bold">
                                 @if (w.Enrollments.Count >= w.Capacity)
                                 {
