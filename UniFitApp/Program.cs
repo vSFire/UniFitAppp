@@ -36,7 +36,11 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
-
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate(); // Эта магия сама добавит поле ImageUrl в базу
+}
 // Настройка HTTP-конвейера
 if (!app.Environment.IsDevelopment())
 {
