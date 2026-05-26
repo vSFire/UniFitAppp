@@ -5,35 +5,38 @@ using UniFitApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// === ДОБАВЛЕНО: Увеличение лимита для загрузки больших фото с телефона ===
+
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 52428800; // 50 МБ
+    serverOptions.Limits.MaxRequestBodySize = 52428800; 
 });
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 52428800; // 50 МБ
+    options.MultipartBodyLengthLimit = 52428800; 
 });
-// =========================================================================
 
-// Добавляем сервисы (MVC)
+
+
 builder.Services.AddControllersWithViews();
 
-// --- ПОДКЛЮЧЕНИЕ POSTGRESQL ---
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
-// ------------------------------
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 4;
+    options.Password.RequireDigit = true; // Обязательно минимум 1 цифра
+    options.Password.RequireLowercase = true; // Обязательно маленькая буква
+    options.Password.RequireUppercase = true; // Обязательно БОЛЬШАЯ буква
+    options.Password.RequireNonAlphanumeric = true; // Обязательно спецсимвол (например, @, !, #)
+    options.Password.RequiredLength = 6; // Минимальная длина пароля (сделаем 6 вместо 4)
 })
-.AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddErrorDescriber<RussianIdentityErrorDescriber>()
+.AddDefaultTokenProviders();
+
+builder.Services.AddTransient<UniFitApp.Services.EmailService>();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -104,7 +107,7 @@ using (var scope = app.Services.CreateScope())
             LastName = "Admin"
         };
         // Пароль: admin
-        var createPowerUser = await userManager.CreateAsync(admin, "admin");
+        var createPowerUser = await userManager.CreateAsync(admin, "Admin@2026");
         if (createPowerUser.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Admin");

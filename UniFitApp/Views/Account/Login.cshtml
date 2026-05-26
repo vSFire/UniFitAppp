@@ -10,16 +10,26 @@
                 <p style="color: var(--text-secondary);">Войдите в свой аккаунт UniFit</p>
             </div>
 
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success small text-center mb-3">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
             <form method="post">
                 <div asp-validation-summary="All" class="text-danger small mb-3"></div>
 
                 <div class="mb-3">
                     <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Email</label>
-                    <input name="email" type="email" class="form-control" placeholder="student@university.com" required />
+                    <input name="email" type="email" class="form-control" placeholder="user@unifit.kz" required />
                 </div>
 
                 <div class="mb-4">
-                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Пароль</label>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="small fw-bold mb-0" style="color: var(--text-secondary);">Пароль</label>
+                        <a asp-action="ForgotPassword" asp-controller="Account" class="small text-decoration-none fw-bold" style="color: var(--primary-orange);">Забыли пароль?</a>
+                    </div>
                     <input name="password" type="password" class="form-control" placeholder="******" required />
                 </div>
 

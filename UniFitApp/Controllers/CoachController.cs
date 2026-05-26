@@ -145,7 +145,7 @@ namespace UniFitApp.Controllers
                 _context.Enrollments.Remove(enrollment);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("Details", new { id = workoutId });
+            return RedirectToAction("Details", new { id = workoutId});
         }
 
         // Удаление Тренировки

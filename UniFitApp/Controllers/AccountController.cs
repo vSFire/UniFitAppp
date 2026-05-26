@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UniFitApp.Data;
 using UniFitApp.Models;
+// Не забудь убедиться, что у тебя есть using UniFitApp.Services; если он в другой папке!
 
 namespace UniFitApp.Controllers
 {
@@ -12,13 +13,17 @@ namespace UniFitApp.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IWebHostEnvironment _appEnvironment;
         private readonly ApplicationDbContext _context;
+        // ДОБАВЛЕНО: сервис для писем
+        private readonly UniFitApp.Services.EmailService _emailService;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IWebHostEnvironment appEnvironment, ApplicationDbContext context)
+        // ДОБАВЛЕНО: emailService в параметры конструктора
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IWebHostEnvironment appEnvironment, ApplicationDbContext context, UniFitApp.Services.EmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _appEnvironment = appEnvironment;
             _context = context;
+            _emailService = emailService; // Инициализация
         }
 
         // GET: Страница регистрации
@@ -178,5 +183,73 @@ namespace UniFitApp.Controllers
 
         [HttpGet]
         public IActionResult Help() => View();
+
+        // ==========================================
+        // ДОБАВЛЕНО: МЕТОДЫ ДЛЯ СБРОСА ПАРОЛЯ
+        // ==========================================
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            if (string.IsNullOrEmpty(email)) return View();
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                // Генерируем секретный токен для пользователя
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Создаем ссылку
+                var resetLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+
+                // Отправляем письмо
+                var message = $"<h4>Восстановление доступа к UniFitApp</h4>" +
+                              $"<p>Вы запросили сброс пароля. Чтобы установить новый пароль, перейдите по <a href='{resetLink}'>этой ссылке</a>.</p>";
+
+                await _emailService.SendEmailAsync(user.Email, "Сброс пароля", message);
+            }
+
+            TempData["SuccessMessage"] = "Если этот email зарегистрирован в системе, мы отправили на него ссылку для сброса пароля.";
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            if (token == null || email == null) return RedirectToAction("Index", "Home");
+
+            ViewBag.Token = token;
+            ViewBag.Email = email;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string email, string token, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return RedirectToAction("Login");
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Пароль успешно изменен! Теперь вы можете войти.";
+                return RedirectToAction("Login");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            ViewBag.Token = token;
+            ViewBag.Email = email;
+            return View();
+        }
     }
 }

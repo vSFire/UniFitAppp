@@ -10,6 +10,27 @@ namespace UniFitApp.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
         public DbSet<Workout> Workouts { get; set; }     // Тренировки
         public DbSet<Enrollment> Enrollments { get; set; } // Записи студентов
