@@ -48,7 +48,22 @@
 
                 <div class="mb-3">
                     <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Пароль</label>
-                    <input name="password" type="password" class="form-control" placeholder="******" required />
+                    <div class="input-group">
+                        <input name="password" id="regPassword" type="password" class="form-control" placeholder="******" required />
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('regPassword', 'eyeIcon1')" style="border-color: #ced4da;">
+                            <i class="fas fa-eye" id="eyeIcon1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="small fw-bold mb-1" style="color: var(--text-secondary);">Подтвердите пароль</label>
+                    <div class="input-group">
+                        <input name="confirmPassword" id="regConfirmPassword" type="password" class="form-control" placeholder="******" required />
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('regConfirmPassword', 'eyeIcon2')" style="border-color: #ced4da;">
+                            <i class="fas fa-eye" id="eyeIcon2"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -79,3 +94,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>

@@ -35,8 +35,14 @@ namespace UniFitApp.Controllers
 
         // POST: Обработка данных формы
         [HttpPost]
-        public async Task<IActionResult> Register(string email, string password, string firstName, string lastName, string userRole)
+        public async Task<IActionResult> Register(string email, string password, string confirmPassword, string firstName, string lastName, string userRole)
         {
+            if (password != confirmPassword)
+            {
+                ModelState.AddModelError(string.Empty, "Пароли не совпадают!");
+                return View();
+            }
+
             if (ModelState.IsValid)
             {
                 var user = new AppUser { UserName = email, Email = email, FirstName = firstName, LastName = lastName };
